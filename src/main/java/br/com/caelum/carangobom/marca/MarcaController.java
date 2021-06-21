@@ -73,19 +73,4 @@ public class MarcaController {
             return ResponseEntity.notFound().build();
         }
     }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ListaDeErrosOutputDto validacao(MethodArgumentNotValidException excecao) {
-        List<ErroDeParametroOutputDto> l = new ArrayList<>();
-        excecao.getBindingResult().getFieldErrors().forEach(e -> {
-            ErroDeParametroOutputDto d = new ErroDeParametroOutputDto();
-            d.setParametro(e.getField());
-            d.setMensagem(e.getDefaultMessage());
-            l.add(d);
-        });
-        ListaDeErrosOutputDto l2 = new ListaDeErrosOutputDto();
-        l2.setErros(l);
-        return l2;
-    }
 }
