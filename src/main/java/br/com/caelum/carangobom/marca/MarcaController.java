@@ -5,7 +5,6 @@ import br.com.caelum.carangobom.validacao.ListaDeErrosOutputDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -17,25 +16,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Controller
+@RestController
+@RequestMapping("/marcas")
 public class MarcaController {
 
+    @Autowired
     private MarcaRepository mr;
 
-    @Autowired
-    public MarcaController(MarcaRepository mr) {
-        this.mr = mr;
-    }
-
-    @GetMapping("/marcas")
-    @ResponseBody
+    @GetMapping
     @Transactional
     public List<Marca> lista() {
         return mr.findAllByOrderByNome();
     }
 
-    @GetMapping("/marcas/{id}")
-    @ResponseBody
+    @GetMapping("/{id}")
     @Transactional
     public ResponseEntity<Marca> id(@PathVariable Long id) {
         Optional<Marca> m1 = mr.findById(id);
@@ -46,8 +40,7 @@ public class MarcaController {
         }
     }
 
-    @PostMapping("/marcas")
-    @ResponseBody
+    @PostMapping
     @Transactional
     public ResponseEntity<Marca> cadastra(@Valid @RequestBody Marca m1, UriComponentsBuilder uriBuilder) {
         Marca m2 = mr.save(m1);
@@ -55,8 +48,7 @@ public class MarcaController {
         return ResponseEntity.created(h).body(m2);
     }
 
-    @PutMapping("/marcas/{id}")
-    @ResponseBody
+    @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<Marca> altera(@PathVariable Long id, @Valid @RequestBody Marca m1) {
         Optional<Marca> m2 = mr.findById(id);
@@ -69,8 +61,7 @@ public class MarcaController {
         }
     }
 
-    @DeleteMapping("/marcas/{id}")
-    @ResponseBody
+    @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<Marca> deleta(@PathVariable Long id) {
         Optional<Marca> m1 = mr.findById(id);
@@ -85,7 +76,6 @@ public class MarcaController {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseBody
     public ListaDeErrosOutputDto validacao(MethodArgumentNotValidException excecao) {
         List<ErroDeParametroOutputDto> l = new ArrayList<>();
         excecao.getBindingResult().getFieldErrors().forEach(e -> {
