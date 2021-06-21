@@ -31,11 +31,6 @@ class MarcaControllerTest {
     @MockBean
     private MarcaRepository marcaRepository;
 
-    @BeforeEach
-    public void configuraMock() {
-        openMocks(this);
-    }
-
     @Test
     void deveRetornarListaQuandoHouverResultados() throws Exception {
         URI uri = new URI("/marcas");
