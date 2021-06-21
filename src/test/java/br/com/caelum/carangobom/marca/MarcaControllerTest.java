@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,10 +33,13 @@ class MarcaControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private final URI baseUri = new URI("/marcas");
+
+    MarcaControllerTest() throws URISyntaxException {
+    }
+
     @Test
     void deveRetornarListaQuandoHouverResultados() throws Exception {
-        URI uri = new URI("/marcas");
-
         List<Marca> marcas = List.of(
             new Marca(1L, "Audi"),
             new Marca(2L, "BMW"),
@@ -47,13 +51,13 @@ class MarcaControllerTest {
         when(marcaRepository.findAllByOrderByNome())
             .thenReturn(marcas);
 
-        mvc.perform(MockMvcRequestBuilders.get(uri)).andExpect(MockMvcResultMatchers.content().json(json));
+        mvc.perform(MockMvcRequestBuilders.get(baseUri)).andExpect(MockMvcResultMatchers.content().json(json));
     }
 
     @Test
     void deveRetornarMarcaPeloId() throws Exception {
         Marca audi = new Marca(1L, "Audi");
-        URI uri = new URI("/marcas/1");
+        URI uri = new URI(baseUri.getPath() + "/1");
 
         when(marcaRepository.findById(1L))
             .thenReturn(Optional.of(audi));
@@ -67,7 +71,7 @@ class MarcaControllerTest {
 
     @Test
     void deveRetornarNotFoundQuandoRecuperarMarcaComIdInexistente() throws Exception {
-        URI uri = new URI("/marcas/1");
+        URI uri = new URI(baseUri.getPath() + "/1");
         when(marcaRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
@@ -76,7 +80,6 @@ class MarcaControllerTest {
 
     @Test
     void deveResponderCreatedELocationQuandoCadastrarMarca() throws Exception {
-        URI uri = new URI("/marcas");
         Marca nova = new Marca("Ferrari");
         Marca expected = new Marca(1L, "Ferrari");
 
@@ -93,7 +96,7 @@ class MarcaControllerTest {
             });
 
         mvc
-        .perform(MockMvcRequestBuilders.post(uri)
+        .perform(MockMvcRequestBuilders.post(baseUri)
             .content(json)
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -103,7 +106,7 @@ class MarcaControllerTest {
 
     @Test
     void deveAlterarNomeQuandoMarcaExistir() throws Exception {
-        URI uri = new URI("/marcas/1");
+        URI uri = new URI(baseUri.getPath() + "/1");
         Marca audi = new Marca(1L, "Audi");
         Marca novaAudi = new Marca(1L, "NOVA Audi");
 
@@ -122,7 +125,7 @@ class MarcaControllerTest {
 
     @Test
     void naoDeveAlterarMarcaInexistente() throws Exception {
-        URI uri = new URI("/marcas/1");
+        URI uri = new URI(baseUri.getPath() + "/1");
         Marca novaAudi = new Marca(1L, "NOVA Audi");
 
         String json = objectMapper.writeValueAsString(novaAudi);
@@ -138,7 +141,7 @@ class MarcaControllerTest {
 
     @Test
     void deveDeletarMarcaExistente() throws Exception {
-        URI uri = new URI("/marcas/1");
+        URI uri = new URI(baseUri.getPath() + "/1");
         Marca audi = new Marca(1l, "Audi");
 
         String json = objectMapper.writeValueAsString(audi);
@@ -153,7 +156,7 @@ class MarcaControllerTest {
 
     @Test
     void naoDeveDeletarMarcaInexistente() throws Exception {
-        URI uri = new URI("/marcas/1");
+        URI uri = new URI(baseUri.getPath() + "/1");
 
         when(marcaRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
