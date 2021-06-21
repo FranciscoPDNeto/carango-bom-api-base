@@ -1,78 +1,97 @@
 package br.com.caelum.carangobom.marca;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.openMocks;
 
+@SpringBootTest
+@AutoConfigureMockMvc
 class MarcaControllerTest {
 
-    private MarcaController marcaController;
-    private UriComponentsBuilder uriBuilder;
+    @Autowired
+    private MockMvc mvc;
 
-    @Mock
+    @MockBean
     private MarcaRepository marcaRepository;
 
     @BeforeEach
     public void configuraMock() {
         openMocks(this);
-
-        marcaController = new MarcaController(marcaRepository);
-        uriBuilder = UriComponentsBuilder.fromUriString("http://localhost:8080");
     }
 
     @Test
-    void deveRetornarListaQuandoHouverResultados() {
+    void deveRetornarListaQuandoHouverResultados() throws Exception {
+        URI uri = new URI("/marcas");
+
         List<Marca> marcas = List.of(
             new Marca(1L, "Audi"),
             new Marca(2L, "BMW"),
             new Marca(3L, "Fiat")
         );
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(marcas);
+
         when(marcaRepository.findAllByOrderByNome())
             .thenReturn(marcas);
 
-        List<Marca> resultado = marcaController.lista();
-        assertEquals(marcas, resultado);
+        mvc.perform(MockMvcRequestBuilders.get(uri)).andExpect(MockMvcResultMatchers.content().json(json));
     }
 
     @Test
-    void deveRetornarMarcaPeloId() {
+    void deveRetornarMarcaPeloId() throws Exception {
         Marca audi = new Marca(1L, "Audi");
+        URI uri = new URI("/marcas/1");
 
         when(marcaRepository.findById(1L))
             .thenReturn(Optional.of(audi));
 
-        ResponseEntity<Marca> resposta = marcaController.id(1L);
-        assertEquals(audi, resposta.getBody());
-        assertEquals(HttpStatus.OK, resposta.getStatusCode());
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(audi);
+
+        mvc.perform(MockMvcRequestBuilders.get(uri))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(json));
     }
 
     @Test
-    void deveRetornarNotFoundQuandoRecuperarMarcaComIdInexistente() {
+    void deveRetornarNotFoundQuandoRecuperarMarcaComIdInexistente() throws Exception {
+        URI uri = new URI("/marcas/1");
         when(marcaRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
-        ResponseEntity<Marca> resposta = marcaController.id(1L);
-        assertEquals(HttpStatus.NOT_FOUND, resposta.getStatusCode());
+        mvc.perform(MockMvcRequestBuilders.get(uri)).andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
-    void deveResponderCreatedELocationQuandoCadastrarMarca() {
+    void deveResponderCreatedELocationQuandoCadastrarMarca() throws Exception {
+        URI uri = new URI("/marcas");
         Marca nova = new Marca("Ferrari");
+        Marca expected = new Marca(1L, "Ferrari");
 
-        when(marcaRepository.save(nova))
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(nova);
+
+        String jsonExpected = objectMapper.writeValueAsString(expected);
+
+        when(marcaRepository.save(any()))
             .then(invocation -> {
                 Marca marcaSalva = invocation.getArgument(0, Marca.class);
                 marcaSalva.setId(1L);
@@ -80,55 +99,77 @@ class MarcaControllerTest {
                 return marcaSalva;
             });
 
-        ResponseEntity<Marca> resposta = marcaController.cadastra(nova, uriBuilder);
-        assertEquals(HttpStatus.CREATED, resposta.getStatusCode());
-        assertEquals("http://localhost:8080/marcas/1", resposta.getHeaders().getLocation().toString());
+        mvc
+        .perform(MockMvcRequestBuilders.post(uri)
+            .content(json)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        .andExpect(MockMvcResultMatchers.header().string("Location", "http://localhost/marcas/1"))
+        .andExpect(MockMvcResultMatchers.content().json(jsonExpected));
     }
 
     @Test
-    void deveAlterarNomeQuandoMarcaExistir() {
+    void deveAlterarNomeQuandoMarcaExistir() throws Exception {
+        URI uri = new URI("/marcas/1");
         Marca audi = new Marca(1L, "Audi");
+        Marca novaAudi = new Marca(1L, "NOVA Audi");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(novaAudi);
 
         when(marcaRepository.findById(1L))
             .thenReturn(Optional.of(audi));
 
-        ResponseEntity<Marca> resposta = marcaController.altera(1L, new Marca(1L, "NOVA Audi"));
-        assertEquals(HttpStatus.OK, resposta.getStatusCode());
-
-        Marca marcaAlterada = resposta.getBody();
-        assertEquals("NOVA Audi", marcaAlterada.getNome());
+        mvc
+        .perform(MockMvcRequestBuilders.put(uri)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(json))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().json(json));
     }
 
     @Test
-    void naoDeveAlterarMarcaInexistente() {
+    void naoDeveAlterarMarcaInexistente() throws Exception {
+        URI uri = new URI("/marcas/1");
+        Marca novaAudi = new Marca(1L, "NOVA Audi");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(novaAudi);
+
         when(marcaRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
-        ResponseEntity<Marca> resposta = marcaController.altera(1L, new Marca(1L, "NOVA Audi"));
-        assertEquals(HttpStatus.NOT_FOUND, resposta.getStatusCode());
+        mvc.perform(MockMvcRequestBuilders.put(uri)
+            .content(json)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
-    void deveDeletarMarcaExistente() {
+    void deveDeletarMarcaExistente() throws Exception {
+        URI uri = new URI("/marcas/1");
         Marca audi = new Marca(1l, "Audi");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(audi);
 
         when(marcaRepository.findById(1L))
             .thenReturn(Optional.of(audi));
 
-        ResponseEntity<Marca> resposta = marcaController.deleta(1L);
-        assertEquals(HttpStatus.OK, resposta.getStatusCode());
+        mvc.perform(MockMvcRequestBuilders.delete(uri)).andExpect(MockMvcResultMatchers.status().isOk());
+
         verify(marcaRepository).delete(audi);
     }
 
     @Test
-    void naoDeveDeletarMarcaInexistente() {
+    void naoDeveDeletarMarcaInexistente() throws Exception {
+        URI uri = new URI("/marcas/1");
+
         when(marcaRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
-        ResponseEntity<Marca> resposta = marcaController.deleta(1L);
-        assertEquals(HttpStatus.NOT_FOUND, resposta.getStatusCode());
+        mvc.perform(MockMvcRequestBuilders.delete(uri)).andExpect(MockMvcResultMatchers.status().isNotFound());
 
         verify(marcaRepository, never()).delete(any());
     }
-
 }
