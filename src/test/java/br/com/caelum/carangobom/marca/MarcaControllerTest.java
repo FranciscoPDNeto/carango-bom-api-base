@@ -19,7 +19,6 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.openMocks;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -31,6 +30,8 @@ class MarcaControllerTest {
     @MockBean
     private MarcaRepository marcaRepository;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Test
     void deveRetornarListaQuandoHouverResultados() throws Exception {
         URI uri = new URI("/marcas");
@@ -41,7 +42,6 @@ class MarcaControllerTest {
             new Marca(3L, "Fiat")
         );
 
-        ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(marcas);
 
         when(marcaRepository.findAllByOrderByNome())
@@ -58,7 +58,6 @@ class MarcaControllerTest {
         when(marcaRepository.findById(1L))
             .thenReturn(Optional.of(audi));
 
-        ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(audi);
 
         mvc.perform(MockMvcRequestBuilders.get(uri))
@@ -81,7 +80,6 @@ class MarcaControllerTest {
         Marca nova = new Marca("Ferrari");
         Marca expected = new Marca(1L, "Ferrari");
 
-        ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(nova);
 
         String jsonExpected = objectMapper.writeValueAsString(expected);
@@ -109,7 +107,6 @@ class MarcaControllerTest {
         Marca audi = new Marca(1L, "Audi");
         Marca novaAudi = new Marca(1L, "NOVA Audi");
 
-        ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(novaAudi);
 
         when(marcaRepository.findById(1L))
@@ -128,7 +125,6 @@ class MarcaControllerTest {
         URI uri = new URI("/marcas/1");
         Marca novaAudi = new Marca(1L, "NOVA Audi");
 
-        ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(novaAudi);
 
         when(marcaRepository.findById(anyLong()))
@@ -145,7 +141,6 @@ class MarcaControllerTest {
         URI uri = new URI("/marcas/1");
         Marca audi = new Marca(1l, "Audi");
 
-        ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(audi);
 
         when(marcaRepository.findById(1L))
