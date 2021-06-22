@@ -47,6 +47,4 @@ public class Veiculo {
         this.valor = valor;
         this.marca = marca;
     }
-
-
 }
