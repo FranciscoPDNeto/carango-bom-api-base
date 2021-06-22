@@ -1,21 +1,11 @@
 package br.com.caelum.carangobom.validacao;
 
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class ListaDeErrosOutputDto {
-
     private List<ErroDeParametroOutputDto> erros;
-
-    public int getQuantidadeDeErros() {
-        return erros.size();
-    }
-
-    public List<ErroDeParametroOutputDto> getErros() {
-        return erros;
-    }
-
-    public void setErros(List<ErroDeParametroOutputDto> erros) {
-        this.erros = erros;
-    }
 }
