@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import javax.persistence.*;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
@@ -29,7 +28,7 @@ public class Veiculo {
     @Positive
     private Integer ano;
 
-    @NonNull
+    @NotBlank
     @Positive
     private BigDecimal valor;
 

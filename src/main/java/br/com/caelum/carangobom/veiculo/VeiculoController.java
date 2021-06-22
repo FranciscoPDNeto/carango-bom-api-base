@@ -1,6 +1,5 @@
 package br.com.caelum.carangobom.veiculo;
 
-import br.com.caelum.carangobom.marca.Marca;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +23,10 @@ public class VeiculoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@Validated @PathVariable Long id) {
+    public ResponseEntity<Void> delete(@Validated @PathVariable Long id) {
         Optional<Veiculo> optVeiculo = veiculoRepository.findById(id);
         if (optVeiculo.isPresent()) {
-            Veiculo veiculo = optVeiculo.get();
+            var veiculo = optVeiculo.get();
             veiculoRepository.delete(veiculo);
             return ResponseEntity.noContent().build();
         } else {
