@@ -1,0 +1,6 @@
+package br.com.caelum.carangobom.veiculo;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface VeiculoRepository extends JpaRepository<Veiculo, Long> {
+}
