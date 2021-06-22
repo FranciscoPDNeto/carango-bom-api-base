@@ -1,7 +1,6 @@
 package br.com.caelum.carangobom.marca;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -166,5 +165,14 @@ class MarcaControllerTest {
         mvc.perform(MockMvcRequestBuilders.delete(uri)).andExpect(MockMvcResultMatchers.status().isNotFound());
 
         verify(marcaRepository, never()).delete(any());
+    }
+
+    @Test
+    void deveRetornarErroDeValidacaoQuandoMandadoParametroInvalido() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post(baseUri)
+                .content("{\"nome\": null}")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().json("{\"erros\":[{\"parametro\":\"nome\",\"mensagem\":\"Deve ser preenchido.\"}]}"));
     }
 }
