@@ -4,10 +4,10 @@ import br.com.caelum.carangobom.marca.Marca;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 
@@ -24,11 +24,11 @@ public class Veiculo {
     @NotBlank
     private String modelo;
 
-    @NonNull
+    @NotNull
     @Positive
     private Integer ano;
 
-    @NotBlank
+    @NotNull
     @Positive
     private BigDecimal valor;
 
