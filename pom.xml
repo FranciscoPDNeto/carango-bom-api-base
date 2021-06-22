@@ -19,6 +19,12 @@
 		<surefire.skip>false</surefire.skip>
 	</properties>
 
+	<properties>
+		<sonar.projectKey>FranciscoPDNeto_carango-bom-api-base</sonar.projectKey>
+		<sonar.organization>acelera4group2</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
