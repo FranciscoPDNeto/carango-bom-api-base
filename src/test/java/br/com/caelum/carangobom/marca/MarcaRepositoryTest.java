@@ -29,12 +29,8 @@ class MarcaRepositoryTest {
     @Test
     void deveRetornarListaDeMarcas() {
         // given
-        String marcaFiat = "Fiat";
-        String marcaAudi = "Audi";
-        Marca m1 = new Marca();
-        Marca m2 = new Marca();
-        m1.setNome(marcaFiat);
-        m2.setNome(marcaAudi);
+        Marca m1 = new Marca("Fiat");
+        Marca m2 = new Marca("Audi");
 
         em.persist(m1);
         em.persist(m2);
