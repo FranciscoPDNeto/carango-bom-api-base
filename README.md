@@ -1,9 +1,5 @@
-## CircleCI Master Status
-[![CircleCI](https://circleci.com/gh/FranciscoPDNeto/carango-bom-api-base/tree/master.svg?style=svg)](https://circleci.com/gh/FranciscoPDNeto/carango-bom-api-base/tree/master)
-
-
-## Quality Gate Status
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=FranciscoPDNeto_carango-bom-api-base&metric=alert_status)](https://sonarcloud.io/dashboard?id=FranciscoPDNeto_carango-bom-api-base)
+## Carango Bom API
+[![CircleCI](https://circleci.com/gh/FranciscoPDNeto/carango-bom-api-base/tree/master.svg?style=svg)](https://circleci.com/gh/FranciscoPDNeto/carango-bom-api-base/tree/master) &nbsp;&nbsp; [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=FranciscoPDNeto_carango-bom-api-base&metric=alert_status)](https://sonarcloud.io/dashboard?id=FranciscoPDNeto_carango-bom-api-base) &nbsp;&nbsp; [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=FranciscoPDNeto_carango-bom-api-base&metric=coverage)](https://sonarcloud.io/dashboard?id=FranciscoPDNeto_carango-bom-api-base)
 
 ## Indice
 
