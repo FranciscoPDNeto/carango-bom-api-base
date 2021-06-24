@@ -16,10 +16,6 @@ public class UsuarioService {
             return null;
         }
 
-        var usuario = new Usuario();
-        usuario.setName(usuarioDTO.getName());
-        usuario.setPassword(usuarioDTO.getPassword());
-
-        return repository.save(usuario);
+        return repository.save(usuarioDTO.convert());
     }
 }
