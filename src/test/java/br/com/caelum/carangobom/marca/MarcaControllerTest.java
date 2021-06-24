@@ -168,4 +168,13 @@ class MarcaControllerTest {
 
         verify(marcaRepository, never()).delete(any());
     }
+
+    @Test
+    void deveRetornarErroDeValidacaoQuandoMandadoParametroInvalido() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post(baseUri)
+                .content("{\"nome\": null}")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().json("{\"erros\":[{\"parametro\":\"nome\",\"mensagem\":\"Deve ser preenchido.\"}]}"));
+    }
 }

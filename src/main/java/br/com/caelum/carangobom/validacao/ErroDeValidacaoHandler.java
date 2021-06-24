@@ -17,9 +17,7 @@ public class ErroDeValidacaoHandler {
     public ListaDeErrosOutputDto handle(MethodArgumentNotValidException excecao) {
         List<ErroDeParametroOutputDto> l = new ArrayList<>();
         excecao.getBindingResult().getFieldErrors().forEach(e -> {
-            ErroDeParametroOutputDto d = new ErroDeParametroOutputDto();
-            d.setParametro(e.getField());
-            d.setMensagem(e.getDefaultMessage());
+            ErroDeParametroOutputDto d = new ErroDeParametroOutputDto(e.getField(), e.getDefaultMessage());
             l.add(d);
         });
         ListaDeErrosOutputDto l2 = new ListaDeErrosOutputDto();
