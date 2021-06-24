@@ -17,8 +17,8 @@ public class UsuarioService {
         }
 
         var usuario = new Usuario();
-        user.setName(usuarioDTO.getName());
-        user.setPassword(usuarioDTO.getPassword());
+        usuario.setName(usuarioDTO.getName());
+        usuario.setPassword(usuarioDTO.getPassword());
 
         return repository.save(usuario);
     }

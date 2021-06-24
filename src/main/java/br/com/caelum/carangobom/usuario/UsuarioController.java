@@ -19,10 +19,10 @@ public class UsuarioController {
     @PostMapping("/cadastro-usuario")
     @Transactional
     public ResponseEntity<Usuario> cadastra(@Valid @RequestBody UsuarioDTO userDTO, UriComponentsBuilder uriBuilder) {
-        var user  = usuarioService.registerNewUser(userDTO);
-        if (user == null)
+        var usuario  = usuarioService.registerNewUser(userDTO);
+        if (usuario == null)
             return ResponseEntity.badRequest().body(null);
-        var h = uriBuilder.path("/usuarios/{id}").buildAndExpand(user.getId()).toUri();
-        return ResponseEntity.created(h).body(user);
+        var h = uriBuilder.path("/usuarios/{id}").buildAndExpand(usuario.getId()).toUri();
+        return ResponseEntity.created(h).body(usuario);
     }
 }
