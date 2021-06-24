@@ -2,6 +2,9 @@ package br.com.caelum.carangobom.veiculo;
 
 import br.com.caelum.carangobom.exception.VeiculoNotFoundException;
 import br.com.caelum.carangobom.marca.Marca;
+import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoRequest;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -58,6 +61,26 @@ class VeiculoServiceTest {
                 )
             )
         ));
+    }
+
+    @Test
+    void deveCriarVeiculo() {
+        // given
+        var veiculo = new Veiculo(1L, "Fiesta", 2000, 100000L, new Marca(1L, "Ford"));
+        var veiculoRequest = new VeiculoRequest(
+            veiculo.getModelo(), veiculo.getAno(), veiculo.getValor(), veiculo.getMarca().getId()
+        );
+        var veiculoResponse = new VeiculoResponse(
+            veiculo.getId(), veiculo.getModelo(), veiculo.getAno(), veiculo.getValor(),
+            new MarcaResponse(veiculo.getMarca().getId(), veiculo.getMarca().getNome())
+        );
+
+        // when
+        when(veiculoRepository.save(any(Veiculo.class))).thenReturn(veiculo);
+        var expectedVeiculo = veiculoService.save(veiculoRequest);
+
+        // then
+        assertThat(expectedVeiculo, is(veiculoResponse));
     }
 
     @Test

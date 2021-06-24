@@ -1,6 +1,8 @@
 package br.com.caelum.carangobom.veiculo;
 
 import br.com.caelum.carangobom.exception.VeiculoNotFoundException;
+import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -59,6 +62,28 @@ class VeiculoControllerTest {
     }
 
     @Test
+    void deveCriarVeiculoERetornarBody() throws Exception {
+        // given
+        var veiculoRequest = new VeiculoRequest("Uno", 2000, 40000L, 1L);
+        var veiculoResponse = new VeiculoResponse(1L, "Uno", 2000, 40000L, new MarcaResponse(1L, "Fiat"));
+
+        // when
+        String jsonResponse = objectMapper.writeValueAsString(veiculoResponse);
+        String jsonRequest = objectMapper.writeValueAsString(veiculoRequest);
+        when(veiculoService.save(veiculoRequest)).thenReturn(veiculoResponse);
+
+        // then
+        mvc.perform(
+            MockMvcRequestBuilders
+                .post(baseUri)
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(MockMvcResultMatchers.status().isCreated())
+            .andExpect(MockMvcResultMatchers.content().json(jsonResponse));
+    }
+
+    @Test
     void deveRetornarNoContentAoDeletarVeiculo() throws Exception {
         // given
         Long veiculoId = 42L;
@@ -71,8 +96,8 @@ class VeiculoControllerTest {
 
         // then
         mvc.perform(
-            MockMvcRequestBuilders.delete(uri)).andExpect(MockMvcResultMatchers.status().isNoContent()
-        );
+            MockMvcRequestBuilders.delete(uri)
+        ).andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
     @Test
