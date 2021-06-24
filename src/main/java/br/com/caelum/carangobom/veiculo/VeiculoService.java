@@ -1,6 +1,7 @@
 package br.com.caelum.carangobom.veiculo;
 
 import br.com.caelum.carangobom.exception.VeiculoNotFoundException;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,12 @@ public class VeiculoService {
             .stream()
             .map(VeiculoResponse::fromModel)
             .collect(Collectors.toList());
+    }
+
+    public VeiculoResponse save(VeiculoRequest veiculoRequest) {
+        var veiculo = veiculoRequest.toModel();
+
+        return VeiculoResponse.fromModel(veiculoRepository.save(veiculo));
     }
 
     public void delete(Long id) {
