@@ -31,7 +31,7 @@ public class VeiculoRequest {
     private Long marcaId;
 
      public Veiculo toModel() {
-        final Marca marca = new Marca(this.getMarcaId());
+        var marca = new Marca(this.getMarcaId());
 
         return new Veiculo(this.getModelo(), this.getAno(), this.getValor(), marca);
     }
