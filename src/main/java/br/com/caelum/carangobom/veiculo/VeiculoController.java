@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -38,12 +37,12 @@ public class VeiculoController {
         @RequestBody @Valid VeiculoRequest veiculoRequest,
         UriComponentsBuilder uriBuilder
     ) {
-       VeiculoResponse veiculoResponse = veiculoService.save(veiculoRequest);
+       var veiculoResponse = veiculoService.save(veiculoRequest);
 
-        URI uri = uriBuilder
-            .path("veiculos/{id}")
-            .buildAndExpand(veiculoResponse.getId())
-            .toUri();
+       var uri = uriBuilder
+           .path("veiculos/{id}")
+           .buildAndExpand(veiculoResponse.getId())
+           .toUri();
 
        return ResponseEntity.created(uri).body(veiculoResponse);
     }
