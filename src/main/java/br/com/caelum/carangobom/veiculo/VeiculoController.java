@@ -1,13 +1,18 @@
 package br.com.caelum.carangobom.veiculo;
 
+import br.com.caelum.carangobom.exception.VeiculoNotFoundException;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("veiculos")
@@ -15,21 +20,19 @@ import java.util.Optional;
 @AllArgsConstructor
 public class VeiculoController {
 
-    private VeiculoRepository veiculoRepository;
+    private VeiculoService veiculoService;
 
     @GetMapping
-    public List<Veiculo> getAll() {
-        return veiculoRepository.findAll();
+    public List<VeiculoResponse> getAll() {
+        return veiculoService.findAll();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@Validated @PathVariable Long id) {
-        Optional<Veiculo> optVeiculo = veiculoRepository.findById(id);
-        if (optVeiculo.isPresent()) {
-            var veiculo = optVeiculo.get();
-            veiculoRepository.delete(veiculo);
+        try {
+            veiculoService.delete(id);
             return ResponseEntity.noContent().build();
-        } else {
+        } catch (VeiculoNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }

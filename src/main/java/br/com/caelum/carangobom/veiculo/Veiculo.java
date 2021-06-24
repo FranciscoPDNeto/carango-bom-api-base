@@ -5,11 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.math.BigDecimal;
 
 @Entity
 @Data
@@ -30,7 +34,7 @@ public class Veiculo {
 
     @NotNull
     @Positive
-    private BigDecimal valor;
+    private Long valor;
 
     @ManyToOne
     @JoinColumn(name = "MARCA_ID")
@@ -40,7 +44,7 @@ public class Veiculo {
         this.id = id;
     }
 
-    public Veiculo(String modelo, Integer ano, BigDecimal valor, Marca marca) {
+    public Veiculo(String modelo, Integer ano, Long valor, Marca marca) {
         this.modelo = modelo;
         this.ano = ano;
         this.valor = valor;
