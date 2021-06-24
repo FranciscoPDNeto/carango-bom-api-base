@@ -17,7 +17,7 @@ public class UsuarioDTO {
     private String password;
 
     public Usuario convert() {
-        Usuario usuario = new Usuario();
+        var usuario = new Usuario();
         usuario.setName(name);
         usuario.setPassword(password);
         return usuario;

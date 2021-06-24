@@ -16,10 +16,10 @@ public class UsuarioService {
             return null;
         }
 
-        Usuario user = new Usuario();
+        var usuario = new Usuario();
         user.setName(usuarioDTO.getName());
         user.setPassword(usuarioDTO.getPassword());
 
-        return repository.save(user);
+        return repository.save(usuario);
     }
 }
