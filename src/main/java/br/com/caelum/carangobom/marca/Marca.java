@@ -19,7 +19,6 @@ public class Marca {
     private String nome;
 
     public Marca() {
-
     }
 
     public Marca(String nome) {
@@ -29,6 +28,10 @@ public class Marca {
     public Marca(Long id, String nome) {
         this.id = id;
         this.nome = nome;
+    }
+
+    public Marca(Long id) {
+        this.id = id;
     }
 
     public Long getId() {
