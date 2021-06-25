@@ -21,7 +21,7 @@ public class UsuarioController {
         var usuario  = usuarioService.registerNewUser(userDTO);
         if (usuario == null)
             return ResponseEntity.badRequest().body(null);
-        var h = uriBuilder.path("/usuarios/{id}").buildAndExpand(usuario.getId()).toUri();
+        var uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(usuario.getId()).toUri();
         return ResponseEntity.created(h).body(usuario);
     }
 }
