@@ -12,14 +12,14 @@ import javax.validation.constraints.NotNull;
 public class UsuarioRequest {
     @NotNull
     @NotEmpty
-    private String nome;
+    private String username;
     @NotNull
     @NotEmpty
     private String senha;
 
     public Usuario toModel() {
         var usuario = new Usuario();
-        usuario.setNome(nome);
+        usuario.setUsername(username);
         usuario.setSenha(senha);
 
         return usuario;

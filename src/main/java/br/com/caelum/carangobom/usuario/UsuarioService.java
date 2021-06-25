@@ -15,7 +15,7 @@ public class UsuarioService {
     UsuarioRepository repository;
 
     public UsuarioResponse registerNewUser(UsuarioRequest usuarioRequest) {
-        repository.findByNome(usuarioRequest.getNome()).ifPresent(user -> { throw new UsuarioAlreadyRegisteredException(); } );
+        repository.findByUsername(usuarioRequest.getUsername()).ifPresent(user -> { throw new UsuarioAlreadyRegisteredException(); } );
 
         return UsuarioResponse.fromModel(repository.save(usuarioRequest.toModel()));
     }

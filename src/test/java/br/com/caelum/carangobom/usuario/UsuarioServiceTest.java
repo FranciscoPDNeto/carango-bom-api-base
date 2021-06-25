@@ -32,13 +32,13 @@ class UsuarioServiceTest {
         usuarioFromRequest.setId(1L);
 
         // when
-        when(repository.findByNome(usuarioRequest.getNome())).thenReturn(Optional.empty());
+        when(repository.findByUsername(usuarioRequest.getUsername())).thenReturn(Optional.empty());
         when(repository.save(any())).thenReturn(usuarioFromRequest);
 
         // then
         var usuarioResponse = usuarioService.registerNewUser(usuarioRequest);
         assertEquals(usuarioResponse.getId(), 1L);
-        assertEquals(usuarioResponse.getNome(), usuarioRequest.getNome());
+        assertEquals(usuarioResponse.getUsername(), usuarioRequest.getUsername());
     }
 
     @Test
@@ -47,7 +47,7 @@ class UsuarioServiceTest {
         UsuarioRequest usuarioRequest = new UsuarioRequest("nomeTeste", "12345");
 
         // when
-        when(repository.findByNome(usuarioRequest.getNome())).thenReturn(Optional.of(usuarioRequest.toModel()));
+        when(repository.findByUsername(usuarioRequest.getUsername())).thenReturn(Optional.of(usuarioRequest.toModel()));
 
         // then
         assertThrows(UsuarioAlreadyRegisteredException.class, () -> usuarioService.registerNewUser(usuarioRequest));

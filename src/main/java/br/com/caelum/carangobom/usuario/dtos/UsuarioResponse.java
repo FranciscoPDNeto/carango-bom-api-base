@@ -9,12 +9,12 @@ import lombok.Data;
 public class UsuarioResponse {
 
     private Long id;
-    private String nome;
+    private String username;
 
     public static UsuarioResponse fromModel(Usuario usuario) {
         return new UsuarioResponse(
             usuario.getId(),
-            usuario.getNome()
+            usuario.getUsername()
         );
     }
 }

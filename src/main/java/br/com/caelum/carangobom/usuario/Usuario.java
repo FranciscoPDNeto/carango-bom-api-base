@@ -17,7 +17,7 @@ public class Usuario {
     @NotNull
     @NotEmpty
     @Column(unique = true)
-    private String nome;
+    private String username;
     @NotNull
     @NotEmpty
     private String senha;
