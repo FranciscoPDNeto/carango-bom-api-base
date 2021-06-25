@@ -37,7 +37,7 @@ class UsuarioServiceTest {
 
         // then
         var usuarioResponse = usuarioService.registerNewUser(usuarioRequest);
-        assertEquals(usuarioResponse.getId(), 1L);
+        assertEquals(1L, usuarioResponse.getId());
         assertEquals(usuarioResponse.getUsername(), usuarioRequest.getUsername());
     }
 
