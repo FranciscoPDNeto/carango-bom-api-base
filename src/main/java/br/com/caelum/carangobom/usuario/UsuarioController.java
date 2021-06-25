@@ -22,6 +22,6 @@ public class UsuarioController {
         if (usuario == null)
             return ResponseEntity.badRequest().body(null);
         var uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(usuario.getId()).toUri();
-        return ResponseEntity.created(h).body(usuario);
+        return ResponseEntity.created(uri).body(usuario);
     }
 }
