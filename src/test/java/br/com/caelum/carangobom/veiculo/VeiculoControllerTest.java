@@ -1,11 +1,16 @@
 package br.com.caelum.carangobom.veiculo;
 
+import br.com.caelum.carangobom.exception.VeiculoNotFoundException;
+import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoRequest;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -14,11 +19,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -29,7 +35,7 @@ class VeiculoControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    private VeiculoRepository veiculoRepository;
+    private VeiculoService veiculoService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -40,46 +46,69 @@ class VeiculoControllerTest {
 
     @Test
     void deveRetornarListaDeVeiculos() throws Exception {
-        List<Veiculo> veiculos = List.of(
-            new Veiculo(1L),
-            new Veiculo(2L),
-            new Veiculo(3L)
+        // given
+        List<VeiculoResponse> veiculos = List.of(
+            new VeiculoResponse(1L),
+            new VeiculoResponse(2L),
+            new VeiculoResponse(3L)
         );
 
+        // when
         String json = objectMapper.writeValueAsString(veiculos);
+        when(veiculoService.findAll()).thenReturn(veiculos);
 
-        when(veiculoRepository.findAll()).thenReturn(veiculos);
-
+        // then
         mvc.perform(MockMvcRequestBuilders.get(baseUri)).andExpect(MockMvcResultMatchers.content().json(json));
     }
 
     @Test
-    void deveDeletarVeiculoExistente() throws Exception {
+    void deveCriarVeiculoERetornarBody() throws Exception {
+        // given
+        var veiculoRequest = new VeiculoRequest("Uno", 2000, 40000L, 1L);
+        var veiculoResponse = new VeiculoResponse(1L, "Uno", 2000, 40000L, new MarcaResponse(1L, "Fiat"));
+
+        // when
+        String jsonResponse = objectMapper.writeValueAsString(veiculoResponse);
+        String jsonRequest = objectMapper.writeValueAsString(veiculoRequest);
+        when(veiculoService.save(veiculoRequest)).thenReturn(veiculoResponse);
+
+        // then
+        mvc.perform(
+            MockMvcRequestBuilders
+                .post(baseUri)
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(MockMvcResultMatchers.status().isCreated())
+            .andExpect(MockMvcResultMatchers.content().json(jsonResponse));
+    }
+
+    @Test
+    void deveRetornarNoContentAoDeletarVeiculo() throws Exception {
+        // given
         Long veiculoId = 42L;
         URI uri = new URI(baseUri.getPath() + "/42");
         Veiculo veiculo = new Veiculo(veiculoId);
 
+        // when
         String json = objectMapper.writeValueAsString(veiculo);
+        doNothing().when(veiculoService).delete(veiculoId);
 
-        when(veiculoRepository.findById(veiculoId))
-            .thenReturn(Optional.of(veiculo));
-
+        // then
         mvc.perform(
-            MockMvcRequestBuilders.delete(uri)).andExpect(MockMvcResultMatchers.status().isNoContent()
-        );
-
-        verify(veiculoRepository).delete(veiculo);
+            MockMvcRequestBuilders.delete(uri)
+        ).andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
     @Test
-    void naoDeveDeletarVeiculoInexistente() throws Exception {
+    void deveRetornarNotFoundAoTentarDeletarVeiculoNaoExistente() throws Exception {
+        // given
         URI uri = new URI(baseUri.getPath() + "/1");
 
-        when(veiculoRepository.findById(anyLong()))
-            .thenReturn(Optional.empty());
+        // when
+        doThrow(new VeiculoNotFoundException()).when(veiculoService).delete(anyLong());
 
+        // then
         mvc.perform(MockMvcRequestBuilders.delete(uri)).andExpect(MockMvcResultMatchers.status().isNotFound());
-
-        verify(veiculoRepository, never()).delete(any());
     }
 }
