@@ -20,7 +20,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/marcas")
@@ -48,7 +47,7 @@ public class MarcaController {
     @PostMapping
     public ResponseEntity<MarcaResponse> cadastra(@Valid @RequestBody MarcaRequest marcaRequest, UriComponentsBuilder uriBuilder) {
         var marcaResponse = marcaService.save(marcaRequest);
-        URI uri = uriBuilder.path("/marcas/{id}").buildAndExpand(marcaResponse.getId()).toUri();
+        var uri = uriBuilder.path("/marcas/{id}").buildAndExpand(marcaResponse.getId()).toUri();
 
         return ResponseEntity.created(uri).body(marcaResponse);
     }

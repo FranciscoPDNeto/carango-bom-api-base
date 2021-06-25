@@ -1,12 +1,9 @@
 package br.com.caelum.carangobom.marca;
 
 import br.com.caelum.carangobom.exception.MarcaNotFoundException;
-import br.com.caelum.carangobom.exception.VeiculoNotFoundException;
 import br.com.caelum.carangobom.marca.dtos.MarcaRequest;
 import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
-import br.com.caelum.carangobom.veiculo.Veiculo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
