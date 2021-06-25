@@ -1,5 +1,7 @@
 package br.com.caelum.carangobom.usuario;
 
+import br.com.caelum.carangobom.usuario.dtos.UsuarioRequest;
+import br.com.caelum.carangobom.usuario.dtos.UsuarioResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,25 +26,25 @@ class UsuarioServiceTest {
 
     @Test
     void deveCadastrarNovoUsuario() {
-        UsuarioDTO usuarioDTO = new UsuarioDTO("nomeTeste", "12345");
-        when(repository.findByName(usuarioDTO.getName())).thenReturn(Optional.empty());
+        UsuarioRequest usuarioRequest = new UsuarioRequest("nomeTeste", "12345");
+        when(repository.findByNome(usuarioRequest.getNome())).thenReturn(Optional.empty());
 
-        Usuario usuarioFromDTO = usuarioDTO.convert();
-        usuarioFromDTO.setId(1L);
-        when(repository.save(any())).thenReturn(usuarioFromDTO);
+        Usuario usuarioFromRequest = usuarioRequest.toModel();
+        usuarioFromRequest.setId(1L);
+        when(repository.save(any())).thenReturn(usuarioFromRequest);
 
-        Usuario usuario = usuarioService.registerNewUser(usuarioDTO);
+        UsuarioResponse usuarioResponse = usuarioService.registerNewUser(usuarioRequest);
 
-        assertEquals(usuario.getName(), usuarioDTO.getName());
-        assertEquals(usuario.getPassword(), usuarioDTO.getPassword());
+        assertEquals(usuarioResponse.getId(), 1L);
+        assertEquals(usuarioResponse.getNome(), usuarioRequest.getNome());
     }
 
     @Test
     void naoDeveCadastrarUsuarioJaExistente() {
-        UsuarioDTO usuarioDTO = new UsuarioDTO("nomeTeste", "12345");
-        when(repository.findByName(usuarioDTO.getName())).thenReturn(Optional.of(usuarioDTO.convert()));
+        UsuarioRequest usuarioRequest = new UsuarioRequest("nomeTeste", "12345");
+        when(repository.findByNome(usuarioRequest.getNome())).thenReturn(Optional.of(usuarioRequest.toModel()));
 
-        Usuario usuario = usuarioService.registerNewUser(usuarioDTO);
-        assertNull(usuario);
+        UsuarioResponse usuarioResponse = usuarioService.registerNewUser(usuarioRequest);
+        assertNull(usuarioResponse);
     }
 }

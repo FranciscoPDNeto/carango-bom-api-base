@@ -1,5 +1,7 @@
 package br.com.caelum.carangobom.usuario;
 
+import br.com.caelum.carangobom.usuario.dtos.UsuarioRequest;
+import br.com.caelum.carangobom.usuario.dtos.UsuarioResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,19 +34,19 @@ class UsuarioControllerTest {
     @Test
     void deveCadastrarComSucesso() throws Exception {
         URI uri = new URI("/cadastro-usuario");
-        UsuarioDTO usuarioDTO = new UsuarioDTO("Joao", "123456");
+        UsuarioRequest usuarioRequest = new UsuarioRequest("Joao", "123456");
 
-        Usuario usuario = new Usuario();
+        Usuario usuario = usuarioRequest.toModel();
         usuario.setId(1L);
-        usuario.setName(usuarioDTO.getName());
-        usuario.setPassword(usuarioDTO.getPassword());
 
-        String json = objectMapper.writeValueAsString(usuarioDTO);
+        UsuarioResponse usuarioResponse = UsuarioResponse.fromModel(usuario);
 
-        when(usuarioService.registerNewUser(usuarioDTO))
-                .thenReturn(usuario);
+        String json = objectMapper.writeValueAsString(usuarioRequest);
 
-        String jsonResult = objectMapper.writeValueAsString(usuario);
+        when(usuarioService.registerNewUser(usuarioRequest))
+                .thenReturn(usuarioResponse);
+
+        String jsonResult = objectMapper.writeValueAsString(usuarioResponse);
 
         mvc
             .perform(MockMvcRequestBuilders.post(uri).content(json).contentType(MediaType.APPLICATION_JSON))
@@ -56,19 +58,12 @@ class UsuarioControllerTest {
     @Test
     void naoDeveCadastrarCasoJaExistaUsuario() throws Exception {
         URI uri = new URI("/cadastro-usuario");
-        UsuarioDTO usuarioDTO = new UsuarioDTO("Joao", "123456");
+        UsuarioRequest usuarioRequest = new UsuarioRequest("Joao", "123456");
 
-        Usuario usuario = new Usuario();
-        usuario.setId(1L);
-        usuario.setName(usuarioDTO.getName());
-        usuario.setPassword(usuarioDTO.getPassword());
+        String json = objectMapper.writeValueAsString(usuarioRequest);
 
-        String json = objectMapper.writeValueAsString(usuarioDTO);
-
-        when(usuarioService.registerNewUser(usuarioDTO))
-                .thenReturn(null);
-
-        String jsonResult = objectMapper.writeValueAsString(usuario);
+        when(usuarioService.registerNewUser(usuarioRequest))
+            .thenReturn(null);
 
         mvc
             .perform(MockMvcRequestBuilders.post(uri).content(json).contentType(MediaType.APPLICATION_JSON))
@@ -78,44 +73,30 @@ class UsuarioControllerTest {
     @Test
     void naoDeveAceitarCadastroComUsuarioVazio() throws Exception {
         URI uri = new URI("/cadastro-usuario");
-        UsuarioDTO usuarioDTO = new UsuarioDTO("", "123456");
+        UsuarioRequest usuarioRequest = new UsuarioRequest("", "123456");
 
-        Usuario usuario = new Usuario();
-        usuario.setId(1L);
-        usuario.setName(usuarioDTO.getName());
-        usuario.setPassword(usuarioDTO.getPassword());
+        String json = objectMapper.writeValueAsString(usuarioRequest);
 
-        String json = objectMapper.writeValueAsString(usuarioDTO);
-
-        when(usuarioService.registerNewUser(usuarioDTO))
-                .thenReturn(null);
-
-        String jsonResult = objectMapper.writeValueAsString(usuario);
+        when(usuarioService.registerNewUser(usuarioRequest))
+            .thenReturn(null);
 
         mvc
-                .perform(MockMvcRequestBuilders.post(uri).content(json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+            .perform(MockMvcRequestBuilders.post(uri).content(json).contentType(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
     void naoDeveAceitarCadastroComSenhaVazia() throws Exception {
         URI uri = new URI("/cadastro-usuario");
-        UsuarioDTO usuarioDTO = new UsuarioDTO("Joao", "");
-
-        Usuario usuario = new Usuario();
-        usuario.setId(1L);
-        usuario.setName(usuarioDTO.getName());
-        usuario.setPassword(usuarioDTO.getPassword());
+        UsuarioRequest usuarioDTO = new UsuarioRequest("Joao", "");
 
         String json = objectMapper.writeValueAsString(usuarioDTO);
 
         when(usuarioService.registerNewUser(usuarioDTO))
-                .thenReturn(null);
-
-        String jsonResult = objectMapper.writeValueAsString(usuario);
+            .thenReturn(null);
 
         mvc
-                .perform(MockMvcRequestBuilders.post(uri).content(json).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+            .perform(MockMvcRequestBuilders.post(uri).content(json).contentType(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }

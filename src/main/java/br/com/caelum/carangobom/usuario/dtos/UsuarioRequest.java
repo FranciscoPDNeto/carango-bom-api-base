@@ -1,5 +1,6 @@
-package br.com.caelum.carangobom.usuario;
+package br.com.caelum.carangobom.usuario.dtos;
 
+import br.com.caelum.carangobom.usuario.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -8,18 +9,19 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
-public class UsuarioDTO {
+public class UsuarioRequest {
     @NotNull
     @NotEmpty
-    private String name;
+    private String nome;
     @NotNull
     @NotEmpty
-    private String password;
+    private String senha;
 
-    public Usuario convert() {
+    public Usuario toModel() {
         var usuario = new Usuario();
-        usuario.setName(name);
-        usuario.setPassword(password);
+        usuario.setNome(nome);
+        usuario.setSenha(senha);
+
         return usuario;
     }
 }

@@ -1,5 +1,7 @@
 package br.com.caelum.carangobom.usuario;
 
+import br.com.caelum.carangobom.usuario.dtos.UsuarioRequest;
+import br.com.caelum.carangobom.usuario.dtos.UsuarioResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,11 +13,11 @@ public class UsuarioService {
     @Autowired
     UsuarioRepository repository;
 
-    public Usuario registerNewUser(UsuarioDTO usuarioDTO) {
-        if (repository.findByName(usuarioDTO.getName()).isPresent()) {
+    public UsuarioResponse registerNewUser(UsuarioRequest usuarioRequest) {
+        if (repository.findByNome(usuarioRequest.getNome()).isPresent()) {
             return null;
         }
 
-        return repository.save(usuarioDTO.convert());
+        return UsuarioResponse.fromModel(repository.save(usuarioRequest.toModel()));
     }
 }
