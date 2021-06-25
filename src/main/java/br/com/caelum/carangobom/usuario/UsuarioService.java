@@ -1,5 +1,6 @@
 package br.com.caelum.carangobom.usuario;
 
+import br.com.caelum.carangobom.exception.UsuarioAlreadyRegisteredException;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioRequest;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,7 @@ public class UsuarioService {
     UsuarioRepository repository;
 
     public UsuarioResponse registerNewUser(UsuarioRequest usuarioRequest) {
-        if (repository.findByNome(usuarioRequest.getNome()).isPresent()) {
-            return null;
-        }
+        repository.findByNome(usuarioRequest.getNome()).ifPresent(user -> { throw new UsuarioAlreadyRegisteredException(); } );
 
         return UsuarioResponse.fromModel(repository.save(usuarioRequest.toModel()));
     }

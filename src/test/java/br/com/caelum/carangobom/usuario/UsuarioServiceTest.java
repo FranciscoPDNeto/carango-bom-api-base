@@ -1,7 +1,7 @@
 package br.com.caelum.carangobom.usuario;
 
+import br.com.caelum.carangobom.exception.UsuarioAlreadyRegisteredException;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioRequest;
-import br.com.caelum.carangobom.usuario.dtos.UsuarioResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,25 +26,30 @@ class UsuarioServiceTest {
 
     @Test
     void deveCadastrarNovoUsuario() {
-        UsuarioRequest usuarioRequest = new UsuarioRequest("nomeTeste", "12345");
-        when(repository.findByNome(usuarioRequest.getNome())).thenReturn(Optional.empty());
-
-        Usuario usuarioFromRequest = usuarioRequest.toModel();
+        // given
+        var usuarioRequest = new UsuarioRequest("nomeTeste", "12345");
+        var usuarioFromRequest = usuarioRequest.toModel();
         usuarioFromRequest.setId(1L);
+
+        // when
+        when(repository.findByNome(usuarioRequest.getNome())).thenReturn(Optional.empty());
         when(repository.save(any())).thenReturn(usuarioFromRequest);
 
-        UsuarioResponse usuarioResponse = usuarioService.registerNewUser(usuarioRequest);
-
+        // then
+        var usuarioResponse = usuarioService.registerNewUser(usuarioRequest);
         assertEquals(usuarioResponse.getId(), 1L);
         assertEquals(usuarioResponse.getNome(), usuarioRequest.getNome());
     }
 
     @Test
     void naoDeveCadastrarUsuarioJaExistente() {
+        // given
         UsuarioRequest usuarioRequest = new UsuarioRequest("nomeTeste", "12345");
+
+        // when
         when(repository.findByNome(usuarioRequest.getNome())).thenReturn(Optional.of(usuarioRequest.toModel()));
 
-        UsuarioResponse usuarioResponse = usuarioService.registerNewUser(usuarioRequest);
-        assertNull(usuarioResponse);
+        // then
+        assertThrows(UsuarioAlreadyRegisteredException.class, () -> usuarioService.registerNewUser(usuarioRequest));
     }
 }

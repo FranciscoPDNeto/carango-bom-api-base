@@ -1,5 +1,6 @@
 package br.com.caelum.carangobom.usuario;
 
+import br.com.caelum.carangobom.exception.UsuarioAlreadyRegisteredException;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioRequest;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,12 @@ public class UsuarioController {
     @PostMapping("/cadastro-usuario")
     @Transactional
     public ResponseEntity<UsuarioResponse> save(@Valid @RequestBody UsuarioRequest usuarioRequest, UriComponentsBuilder uriBuilder) {
-        var usuarioResponse  = usuarioService.registerNewUser(usuarioRequest);
-        if (usuarioResponse == null)
-            return ResponseEntity.badRequest().body(null);
-        var uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(usuarioResponse.getId()).toUri();
-        return ResponseEntity.created(uri).body(usuarioResponse);
+        try {
+            var usuarioResponse = usuarioService.registerNewUser(usuarioRequest);
+            var uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(usuarioResponse.getId()).toUri();
+            return ResponseEntity.created(uri).body(usuarioResponse);
+        } catch (UsuarioAlreadyRegisteredException exception) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

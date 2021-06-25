@@ -1,5 +1,6 @@
 package br.com.caelum.carangobom.usuario;
 
+import br.com.caelum.carangobom.exception.UsuarioAlreadyRegisteredException;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioRequest;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.net.URI;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -33,21 +36,20 @@ class UsuarioControllerTest {
 
     @Test
     void deveCadastrarComSucesso() throws Exception {
+        // given
         URI uri = new URI("/cadastro-usuario");
         UsuarioRequest usuarioRequest = new UsuarioRequest("Joao", "123456");
-
         Usuario usuario = usuarioRequest.toModel();
         usuario.setId(1L);
-
         UsuarioResponse usuarioResponse = UsuarioResponse.fromModel(usuario);
 
+        // when
         String json = objectMapper.writeValueAsString(usuarioRequest);
-
-        when(usuarioService.registerNewUser(usuarioRequest))
-                .thenReturn(usuarioResponse);
-
         String jsonResult = objectMapper.writeValueAsString(usuarioResponse);
+        when(usuarioService.registerNewUser(usuarioRequest))
+            .thenReturn(usuarioResponse);
 
+        // then
         mvc
             .perform(MockMvcRequestBuilders.post(uri).content(json).contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -57,14 +59,15 @@ class UsuarioControllerTest {
 
     @Test
     void naoDeveCadastrarCasoJaExistaUsuario() throws Exception {
+        // given
         URI uri = new URI("/cadastro-usuario");
         UsuarioRequest usuarioRequest = new UsuarioRequest("Joao", "123456");
 
+        // when
         String json = objectMapper.writeValueAsString(usuarioRequest);
+        doThrow(new UsuarioAlreadyRegisteredException()).when(usuarioService).registerNewUser(any());
 
-        when(usuarioService.registerNewUser(usuarioRequest))
-            .thenReturn(null);
-
+        // then
         mvc
             .perform(MockMvcRequestBuilders.post(uri).content(json).contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -72,14 +75,16 @@ class UsuarioControllerTest {
 
     @Test
     void naoDeveAceitarCadastroComUsuarioVazio() throws Exception {
+        // given
         URI uri = new URI("/cadastro-usuario");
         UsuarioRequest usuarioRequest = new UsuarioRequest("", "123456");
 
+        // when
         String json = objectMapper.writeValueAsString(usuarioRequest);
-
         when(usuarioService.registerNewUser(usuarioRequest))
             .thenReturn(null);
 
+        // then
         mvc
             .perform(MockMvcRequestBuilders.post(uri).content(json).contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -87,11 +92,12 @@ class UsuarioControllerTest {
 
     @Test
     void naoDeveAceitarCadastroComSenhaVazia() throws Exception {
+        // given
         URI uri = new URI("/cadastro-usuario");
         UsuarioRequest usuarioDTO = new UsuarioRequest("Joao", "");
 
+        // when
         String json = objectMapper.writeValueAsString(usuarioDTO);
-
         when(usuarioService.registerNewUser(usuarioDTO))
             .thenReturn(null);
 
