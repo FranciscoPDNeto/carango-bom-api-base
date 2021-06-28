@@ -44,7 +44,7 @@ public class MarcaController {
     }
 
     @PostMapping
-    public ResponseEntity<MarcaResponse> cadastra(@Valid @RequestBody MarcaRequest marcaRequest, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<MarcaResponse> save(@Valid @RequestBody MarcaRequest marcaRequest, UriComponentsBuilder uriBuilder) {
         var marcaResponse = marcaService.save(marcaRequest);
         var uri = uriBuilder.path("/marcas/{id}").buildAndExpand(marcaResponse.getId()).toUri();
 
