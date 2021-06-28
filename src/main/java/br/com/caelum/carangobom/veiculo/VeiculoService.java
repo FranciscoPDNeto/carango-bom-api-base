@@ -4,6 +4,7 @@ import br.com.caelum.carangobom.exception.VeiculoNotFoundException;
 import br.com.caelum.carangobom.marca.Marca;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoResponse;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoUpdateRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,7 @@ public class VeiculoService {
         return VeiculoResponse.fromModel(veiculoRepository.save(veiculo));
     }
 
-    public VeiculoResponse update(Long id, VeiculoRequest veiculoRequest) {
+    public VeiculoResponse update(Long id, VeiculoUpdateRequest veiculoRequest) {
         var veiculo = getVeiculo(id);
 
         veiculo.setModelo(Objects.requireNonNullElse(veiculoRequest.getModelo(), veiculo.getModelo()));

@@ -5,6 +5,7 @@ import br.com.caelum.carangobom.marca.Marca;
 import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoResponse;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoUpdateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -80,6 +81,24 @@ class VeiculoServiceTest {
 
         // then
         assertThat(expectedVeiculo, is(veiculoResponse));
+    }
+
+    @Test
+    void deveAtualizarVeiculo() {
+        // given
+        Veiculo veiculo = new Veiculo(1L, "modelo", 1991, 12000L, new Marca(1L));
+        VeiculoUpdateRequest veiculoRequest = new VeiculoUpdateRequest();
+        veiculoRequest.setModelo("novoModelo");
+
+        // when
+        when(veiculoRepository.findById(veiculo.getId())).thenReturn(Optional.of(veiculo));
+        when(veiculoRepository.save(any(Veiculo.class))).thenReturn(veiculo);
+
+        veiculoService.update(veiculo.getId(), veiculoRequest);
+
+        // then
+        verify(veiculoRepository).save(veiculo);
+        assertThat(veiculo.getModelo(), is("novoModelo"));
     }
 
     @Test
