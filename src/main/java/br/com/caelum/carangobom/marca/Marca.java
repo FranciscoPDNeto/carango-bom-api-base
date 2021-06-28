@@ -1,5 +1,8 @@
 package br.com.caelum.carangobom.marca;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -9,6 +12,8 @@ import javax.validation.constraints.Size;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
+@Data
+@NoArgsConstructor
 public class Marca {
 
     @Id @GeneratedValue(strategy = IDENTITY)
@@ -17,9 +22,6 @@ public class Marca {
     @NotBlank
     @Size(min = 2, message = "Deve ter {min} ou mais caracteres.")
     private String nome;
-
-    public Marca() {
-    }
 
     public Marca(String nome) {
         this(null, nome);
@@ -32,21 +34,5 @@ public class Marca {
 
     public Marca(Long id) {
         this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
     }
 }

@@ -1,5 +1,8 @@
 package br.com.caelum.carangobom.marca;
 
+import br.com.caelum.carangobom.exception.MarcaNotFoundException;
+import br.com.caelum.carangobom.marca.dtos.MarcaRequest;
+import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +18,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -32,7 +35,7 @@ class MarcaControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    private MarcaRepository marcaRepository;
+    private MarcaService marcaService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -43,30 +46,34 @@ class MarcaControllerTest {
 
     @Test
     void deveRetornarListaQuandoHouverResultados() throws Exception {
-        List<Marca> marcas = List.of(
-            new Marca(1L, "Audi"),
-            new Marca(2L, "BMW"),
-            new Marca(3L, "Fiat")
+        // given
+        var marcas = List.of(
+            new MarcaResponse(1L, "Audi"),
+            new MarcaResponse(2L, "BMW"),
+            new MarcaResponse(3L, "Fiat")
         );
 
+        // when
         String json = objectMapper.writeValueAsString(marcas);
-
-        when(marcaRepository.findAllByOrderByNome())
+        when(marcaService.findAllByNameOrder())
             .thenReturn(marcas);
 
+        // then
         mvc.perform(MockMvcRequestBuilders.get(baseUri)).andExpect(MockMvcResultMatchers.content().json(json));
     }
 
     @Test
     void deveRetornarMarcaPeloId() throws Exception {
-        Marca audi = new Marca(1L, "Audi");
+        // given
+        var audi = new MarcaResponse(1L, "Audi");
         URI uri = new URI(baseUri.getPath() + "/1");
 
-        when(marcaRepository.findById(1L))
-            .thenReturn(Optional.of(audi));
-
+        // when
         String json = objectMapper.writeValueAsString(audi);
+        when(marcaService.findById(1L))
+            .thenReturn(audi);
 
+        // then
         mvc.perform(MockMvcRequestBuilders.get(uri))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(json));
@@ -74,30 +81,33 @@ class MarcaControllerTest {
 
     @Test
     void deveRetornarNotFoundQuandoRecuperarMarcaComIdInexistente() throws Exception {
+        // given
         URI uri = new URI(baseUri.getPath() + "/1");
-        when(marcaRepository.findById(anyLong()))
-                .thenReturn(Optional.empty());
 
+        // when
+        doThrow(new MarcaNotFoundException()).when(marcaService).findById(anyLong());
+
+        // then
         mvc.perform(MockMvcRequestBuilders.get(uri)).andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
     void deveResponderCreatedELocationQuandoCadastrarMarca() throws Exception {
-        Marca nova = new Marca("Ferrari");
-        Marca expected = new Marca(1L, "Ferrari");
+        // given
+        var nova = new MarcaRequest("Ferrari");
+        var expected = new MarcaResponse(1L, "Ferrari");
 
+        // when
         String json = objectMapper.writeValueAsString(nova);
-
         String jsonExpected = objectMapper.writeValueAsString(expected);
-
-        when(marcaRepository.save(any()))
+        when(marcaService.save(any(MarcaRequest.class)))
             .then(invocation -> {
-                Marca marcaSalva = invocation.getArgument(0, Marca.class);
-                marcaSalva.setId(1L);
+                var marcaSalva = invocation.getArgument(0, MarcaRequest.class);
 
-                return marcaSalva;
+                return new MarcaResponse(1L, marcaSalva.getNome());
             });
 
+        // then
         mvc
         .perform(MockMvcRequestBuilders.post(baseUri)
             .content(json)
@@ -109,33 +119,37 @@ class MarcaControllerTest {
 
     @Test
     void deveAlterarNomeQuandoMarcaExistir() throws Exception {
+        // given
         URI uri = new URI(baseUri.getPath() + "/1");
-        Marca audi = new Marca(1L, "Audi");
-        Marca novaAudi = new Marca(1L, "NOVA Audi");
+        var novaAudi = new MarcaRequest("NOVA Audi");
+        var novaAudiResponse = new MarcaResponse(1L, "NOVA Audi");
 
+        // when
         String json = objectMapper.writeValueAsString(novaAudi);
+        String expectedJsonReturn = objectMapper.writeValueAsString(novaAudiResponse);
+        when(marcaService.update(eq(1L), any(MarcaRequest.class)))
+            .thenReturn(novaAudiResponse);
 
-        when(marcaRepository.findById(1L))
-            .thenReturn(Optional.of(audi));
-
+        // then
         mvc
         .perform(MockMvcRequestBuilders.put(uri)
             .contentType(MediaType.APPLICATION_JSON)
             .content(json))
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().json(json));
+        .andExpect(MockMvcResultMatchers.content().json(expectedJsonReturn));
     }
 
     @Test
     void naoDeveAlterarMarcaInexistente() throws Exception {
+        // given
         URI uri = new URI(baseUri.getPath() + "/1");
         Marca novaAudi = new Marca(1L, "NOVA Audi");
 
+        // when
         String json = objectMapper.writeValueAsString(novaAudi);
+        doThrow(new MarcaNotFoundException()).when(marcaService).update(anyLong(), any());
 
-        when(marcaRepository.findById(anyLong()))
-                .thenReturn(Optional.empty());
-
+        // then
         mvc.perform(MockMvcRequestBuilders.put(uri)
             .content(json)
             .contentType(MediaType.APPLICATION_JSON))
@@ -144,29 +158,27 @@ class MarcaControllerTest {
 
     @Test
     void deveDeletarMarcaExistente() throws Exception {
+        // given
         URI uri = new URI(baseUri.getPath() + "/1");
         Marca audi = new Marca(1l, "Audi");
 
-        String json = objectMapper.writeValueAsString(audi);
+        // when
+        doNothing().when(marcaService).delete(1L);
 
-        when(marcaRepository.findById(1L))
-            .thenReturn(Optional.of(audi));
-
+        // then
         mvc.perform(MockMvcRequestBuilders.delete(uri)).andExpect(MockMvcResultMatchers.status().isOk());
-
-        verify(marcaRepository).delete(audi);
     }
 
     @Test
     void naoDeveDeletarMarcaInexistente() throws Exception {
+        // given
         URI uri = new URI(baseUri.getPath() + "/1");
 
-        when(marcaRepository.findById(anyLong()))
-                .thenReturn(Optional.empty());
+        // when
+        doThrow(new MarcaNotFoundException()).when(marcaService).delete(anyLong());
 
+        // then
         mvc.perform(MockMvcRequestBuilders.delete(uri)).andExpect(MockMvcResultMatchers.status().isNotFound());
-
-        verify(marcaRepository, never()).delete(any());
     }
 
     @Test
