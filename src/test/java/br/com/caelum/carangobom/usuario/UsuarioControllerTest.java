@@ -17,10 +17,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -35,10 +38,14 @@ class UsuarioControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private final URI baseUri = new URI("/usuarios");
+
+    UsuarioControllerTest() throws URISyntaxException {
+    }
+
     @Test
     void deveCadastrarComSucesso() throws Exception {
         // given
-        URI uri = new URI("/cadastro-usuario");
         UsuarioRequest usuarioRequest = new UsuarioRequest("Joao", "123456");
         Usuario usuario = usuarioRequest.toModel();
         usuario.setId(1L);
@@ -52,7 +59,7 @@ class UsuarioControllerTest {
 
         // then
         mvc
-            .perform(MockMvcRequestBuilders.post(uri).content(json).contentType(MediaType.APPLICATION_JSON))
+            .perform(MockMvcRequestBuilders.post(baseUri).content(json).contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isCreated())
             .andExpect(MockMvcResultMatchers.header().string("Location", "http://localhost/usuarios/1"))
             .andExpect(MockMvcResultMatchers.content().json(jsonResult));
@@ -61,7 +68,6 @@ class UsuarioControllerTest {
     @Test
     void naoDeveCadastrarCasoJaExistaUsuario() throws Exception {
         // given
-        URI uri = new URI("/cadastro-usuario");
         UsuarioRequest usuarioRequest = new UsuarioRequest("Joao", "123456");
 
         // when
@@ -70,14 +76,13 @@ class UsuarioControllerTest {
 
         // then
         mvc
-            .perform(MockMvcRequestBuilders.post(uri).content(json).contentType(MediaType.APPLICATION_JSON))
+            .perform(MockMvcRequestBuilders.post(baseUri).content(json).contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
     void naoDeveAceitarCadastroComUsuarioVazio() throws Exception {
         // given
-        URI uri = new URI("/cadastro-usuario");
         UsuarioRequest usuarioRequest = new UsuarioRequest("", "123456");
 
         // when
@@ -87,14 +92,13 @@ class UsuarioControllerTest {
 
         // then
         mvc
-            .perform(MockMvcRequestBuilders.post(uri).content(json).contentType(MediaType.APPLICATION_JSON))
+            .perform(MockMvcRequestBuilders.post(baseUri).content(json).contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
     void naoDeveAceitarCadastroComSenhaVazia() throws Exception {
         // given
-        URI uri = new URI("/cadastro-usuario");
         UsuarioRequest usuarioDTO = new UsuarioRequest("Joao", "");
 
         // when
@@ -103,14 +107,13 @@ class UsuarioControllerTest {
             .thenReturn(null);
 
         mvc
-            .perform(MockMvcRequestBuilders.post(uri).content(json).contentType(MediaType.APPLICATION_JSON))
+            .perform(MockMvcRequestBuilders.post(baseUri).content(json).contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
     void deveRetornarListaDeUsuarios() throws Exception {
         // given
-        var uri = new URI("/usuarios");
         var usuarios = List.of(
                 new UsuarioResponse(1L, "João"),
                 new UsuarioResponse(2L, "Maria"),
@@ -123,7 +126,7 @@ class UsuarioControllerTest {
         when(usuarioService.findAll()).thenReturn(usuarios);
 
         // then
-        mvc.perform(MockMvcRequestBuilders.get(uri))
+        mvc.perform(MockMvcRequestBuilders.get(baseUri))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(json));
     }
@@ -131,7 +134,7 @@ class UsuarioControllerTest {
     @Test
     void deveExcluirUsuarioExistente() throws Exception {
         // given
-        var uri = new URI("/usuarios/1");
+        var uri = new URI(baseUri.getPath() + "/1");
         var usuario = new Usuario(1L, "João", "1234");
 
         // when
@@ -140,13 +143,13 @@ class UsuarioControllerTest {
 
         //then
         mvc.perform(MockMvcRequestBuilders.delete(uri))
-                .andExpect(MockMvcResultMatchers.status().isNoContent());
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
     void deveRetornarNotFoundAoTentarExcluirUsuarioInexistente() throws Exception {
         // given
-        var uri = new URI("/usuarios/1");
+        var uri = new URI(baseUri.getPath() + "/1");
 
         // when
         doThrow(new UsuarioNotFoundException()).when(usuarioService).delete(1L);

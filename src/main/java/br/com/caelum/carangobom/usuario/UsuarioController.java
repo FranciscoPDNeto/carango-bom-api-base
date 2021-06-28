@@ -15,13 +15,14 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@RequestMapping("usuarios")
 @Transactional
 public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
 
-    @PostMapping("/cadastro-usuario")
+    @PostMapping
     public ResponseEntity<UsuarioResponse> save(@Valid @RequestBody UsuarioRequest usuarioRequest, UriComponentsBuilder uriBuilder) {
         try {
             var usuarioResponse = usuarioService.registerNewUser(usuarioRequest);
@@ -32,16 +33,16 @@ public class UsuarioController {
         }
     }
 
-    @GetMapping("/usuarios")
+    @GetMapping
     public ResponseEntity<List<UsuarioResponse>> getAll() {
         return ResponseEntity.ok(usuarioService.findAll());
     }
 
-    @DeleteMapping("/usuarios/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@Validated @PathVariable Long id) {
         try {
             usuarioService.delete(id);
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().build();
         } catch (UsuarioNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
