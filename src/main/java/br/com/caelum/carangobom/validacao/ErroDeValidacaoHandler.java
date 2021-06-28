@@ -15,13 +15,15 @@ public class ErroDeValidacaoHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ListaDeErrosOutputDto handle(MethodArgumentNotValidException excecao) {
-        List<ErroDeParametroOutputDto> l = new ArrayList<>();
+        List<ErroDeParametroOutputDto> errosList = new ArrayList<>();
         excecao.getBindingResult().getFieldErrors().forEach(e -> {
-            ErroDeParametroOutputDto d = new ErroDeParametroOutputDto(e.getField(), e.getDefaultMessage());
-            l.add(d);
+            ErroDeParametroOutputDto erroDeParametroOutputDto = new ErroDeParametroOutputDto(
+                e.getField(), e.getDefaultMessage()
+            );
+            errosList.add(erroDeParametroOutputDto);
         });
-        ListaDeErrosOutputDto l2 = new ListaDeErrosOutputDto();
-        l2.setErros(l);
-        return l2;
+        var errosList2 = new ListaDeErrosOutputDto();
+        errosList2.setErros(errosList);
+        return errosList2;
     }
 }
