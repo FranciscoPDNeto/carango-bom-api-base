@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.net.URI;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -104,5 +105,26 @@ class UsuarioControllerTest {
         mvc
             .perform(MockMvcRequestBuilders.post(uri).content(json).contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    void deveRetornarListaDeUsuarios() throws Exception {
+        // given
+        var uri = new URI("/usuarios");
+        var usuarios = List.of(
+                new UsuarioResponse(1L, "João"),
+                new UsuarioResponse(2L, "Maria"),
+                new UsuarioResponse(3L, "José"),
+                new UsuarioResponse(4L, "Ana")
+        );
+
+        // when
+        var json = objectMapper.writeValueAsString(usuarios);
+        when(usuarioService.findAll()).thenReturn(usuarios);
+
+        // then
+        mvc.perform(MockMvcRequestBuilders.get(uri))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(json));
     }
 }
