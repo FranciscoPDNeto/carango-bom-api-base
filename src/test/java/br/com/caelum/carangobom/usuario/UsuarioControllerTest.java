@@ -143,7 +143,7 @@ class UsuarioControllerTest {
 
         //then
         mvc.perform(MockMvcRequestBuilders.delete(uri))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
     @Test

@@ -48,7 +48,7 @@ public class UsuarioController {
     public ResponseEntity<Void> delete(@Validated @PathVariable Long id) {
         try {
             usuarioService.delete(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (UsuarioNotFoundException e) {
             return ResponseEntity.notFound().build();
         }

@@ -152,7 +152,7 @@ class MarcaControllerTest {
         when(marcaRepository.findById(1L))
             .thenReturn(Optional.of(audi));
 
-        mvc.perform(MockMvcRequestBuilders.delete(uri)).andExpect(MockMvcResultMatchers.status().isOk());
+        mvc.perform(MockMvcRequestBuilders.delete(uri)).andExpect(MockMvcResultMatchers.status().isNoContent());
 
         verify(marcaRepository).delete(audi);
     }
