@@ -1,15 +1,14 @@
 package br.com.caelum.carangobom.usuario;
 
 import br.com.caelum.carangobom.exception.UsuarioAlreadyRegisteredException;
+import br.com.caelum.carangobom.exception.UsuarioNotFoundException;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioRequest;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
@@ -36,5 +35,15 @@ public class UsuarioController {
     @GetMapping("/usuarios")
     public ResponseEntity<List<UsuarioResponse>> getAll() {
         return ResponseEntity.ok(usuarioService.findAll());
+    }
+
+    @DeleteMapping("/usuarios/{id}")
+    public ResponseEntity<Void> delete(@Validated @PathVariable Long id) {
+        try {
+            usuarioService.delete(id);
+            return ResponseEntity.noContent().build();
+        } catch (UsuarioNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

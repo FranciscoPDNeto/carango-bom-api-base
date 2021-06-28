@@ -1,6 +1,7 @@
 package br.com.caelum.carangobom.usuario;
 
 import br.com.caelum.carangobom.exception.UsuarioAlreadyRegisteredException;
+import br.com.caelum.carangobom.exception.UsuarioNotFoundException;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioRequest;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioResponse;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -79,5 +80,25 @@ class UsuarioServiceTest {
                 equalToObject(UsuarioResponse.fromModel(usuarios.get(2))),
                 equalToObject(UsuarioResponse.fromModel(usuarios.get(3)))
         ));
+    }
+
+    @Test
+    void deveDeletarUsuarioExistente() {
+        // given
+        var usuario = new Usuario(1L, "João", "12345");
+
+        // when
+        when(repository.findById(usuario.getId())).thenReturn(Optional.of(usuario));
+        usuarioService.delete(usuario.getId());
+
+        // then
+        verify(repository).delete(usuario);
+    }
+
+    @Test
+    void deveLancarExceptionQuandoTentarDeletarUsuarioInexistente() {
+        // then
+        assertThrows(UsuarioNotFoundException.class, () -> usuarioService.delete(1L));
+        verify(repository, never()).delete(any());
     }
 }

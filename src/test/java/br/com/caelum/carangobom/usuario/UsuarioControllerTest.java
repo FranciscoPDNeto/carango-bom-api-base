@@ -1,6 +1,7 @@
 package br.com.caelum.carangobom.usuario;
 
 import br.com.caelum.carangobom.exception.UsuarioAlreadyRegisteredException;
+import br.com.caelum.carangobom.exception.UsuarioNotFoundException;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioRequest;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,8 +20,7 @@ import java.net.URI;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -126,5 +126,33 @@ class UsuarioControllerTest {
         mvc.perform(MockMvcRequestBuilders.get(uri))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(json));
+    }
+
+    @Test
+    void deveExcluirUsuarioExistente() throws Exception {
+        // given
+        var uri = new URI("/usuarios/1");
+        var usuario = new Usuario(1L, "João", "1234");
+
+        // when
+        var json = objectMapper.writeValueAsString(usuario);
+        doNothing().when(usuarioService).delete(usuario.getId());
+
+        //then
+        mvc.perform(MockMvcRequestBuilders.delete(uri))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    void deveRetornarNotFoundAoTentarExcluirUsuarioInexistente() throws Exception {
+        // given
+        var uri = new URI("/usuarios/1");
+
+        // when
+        doThrow(new UsuarioNotFoundException()).when(usuarioService).delete(1L);
+
+        //then
+        mvc.perform(MockMvcRequestBuilders.delete(uri))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 }
