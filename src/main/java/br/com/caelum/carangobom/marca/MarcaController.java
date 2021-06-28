@@ -35,10 +35,10 @@ public class MarcaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<MarcaResponse> getById(@Validated @PathVariable Long id) {
-        var marcaResponse = marcaService.findById(id);
-        if (marcaResponse != null) {
+        try {
+            var marcaResponse = marcaService.findById(id);
             return ResponseEntity.ok(marcaResponse);
-        } else {
+        } catch (MarcaNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }

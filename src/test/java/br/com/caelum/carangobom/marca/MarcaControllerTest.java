@@ -85,8 +85,7 @@ class MarcaControllerTest {
         URI uri = new URI(baseUri.getPath() + "/1");
 
         // when
-        when(marcaService.findById(anyLong()))
-                .thenReturn(null);
+        doThrow(new MarcaNotFoundException()).when(marcaService).findById(anyLong());
 
         // then
         mvc.perform(MockMvcRequestBuilders.get(uri)).andExpect(MockMvcResultMatchers.status().isNotFound());

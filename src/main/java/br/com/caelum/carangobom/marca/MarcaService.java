@@ -24,11 +24,10 @@ public class MarcaService {
     }
 
     public MarcaResponse findById(Long id) {
-        Optional<Marca> marca = marcaRepository.findById(id);
-        if (marca.isPresent())
-            return MarcaResponse.fromModel(marca.get());
+        Optional<Marca> marcaOptional = marcaRepository.findById(id);
+        var marca = marcaOptional.orElseThrow(MarcaNotFoundException::new);
 
-        return null;
+        return MarcaResponse.fromModel(marca);
     }
 
     public MarcaResponse save(MarcaRequest marcaRequest) {

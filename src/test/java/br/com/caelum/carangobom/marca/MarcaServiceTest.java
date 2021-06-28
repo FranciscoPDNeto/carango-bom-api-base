@@ -110,10 +110,9 @@ class MarcaServiceTest {
 
         // when
         when(marcaRepository.findById(id)).thenReturn(Optional.empty());
-        var marcaResponse = marcaService.findById(id);
 
         // then
-        assertNull(marcaResponse);
+        assertThrows(MarcaNotFoundException.class, () -> marcaService.findById(1L));
     }
 
     @Test
