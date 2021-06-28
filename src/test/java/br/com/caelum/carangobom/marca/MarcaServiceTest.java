@@ -16,8 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalToObject;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -88,5 +87,59 @@ class MarcaServiceTest {
         // then
         assertThrows(MarcaNotFoundException.class, () -> marcaService.delete(1L));
         verify(marcaRepository, never()).delete(any());
+    }
+
+    @Test
+    void deveRetornarMarcaPeloId() {
+        // given
+        var marca = new Marca(1L, "Ford");
+
+        // when
+        when(marcaRepository.findById(marca.getId())).thenReturn(Optional.of(marca));
+        var marcaResponse = marcaService.findById(1L);
+
+        // then
+        assertEquals(marca.getId(), marcaResponse.getId());
+        assertEquals(marca.getNome(), marcaResponse.getNome());
+    }
+
+    @Test
+    void deveRetornarNuloParaBuscaComIdInexistente() {
+        // given
+        var id = 1L;
+
+        // when
+        when(marcaRepository.findById(id)).thenReturn(Optional.empty());
+        var marcaResponse = marcaService.findById(id);
+
+        // then
+        assertNull(marcaResponse);
+    }
+
+    @Test
+    void deveAtualizarMarca() {
+        // given
+        var marca = new Marca(1L, "Audi");
+        var marcaRequest = new MarcaRequest("Nova Audi");
+
+        // when
+        when(marcaRepository.findById(marca.getId())).thenReturn(Optional.of(marca));
+        var marcaResponse = marcaService.update(1L, marcaRequest);
+
+        // then
+        assertEquals(marca.getId(), marcaResponse.getId());
+        assertEquals(marcaRequest.getNome(), marcaResponse.getNome());
+    }
+
+    @Test
+    void deveLancarExcecaoAoTentarAtualizarMarcaInexistente() {
+        // given
+        var marcaRequest = new MarcaRequest("Nova Audi");
+
+        // when
+        when(marcaRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // then
+        assertThrows(MarcaNotFoundException.class, () -> marcaService.update(1L, marcaRequest));
     }
 }
