@@ -27,7 +27,7 @@ public class VeiculoRequest {
     @Positive
     private Long valor;
 
-    @NotNull
+    @NonNull
     private Long marcaId;
 
      public Veiculo toModel() {
