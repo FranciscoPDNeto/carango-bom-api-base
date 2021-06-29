@@ -4,7 +4,11 @@
 ## Indice
 
 * [Sobre o projeto](#sobre-o-projeto)
+* [Documentação](#documentação)
 
 ## Sobre o projeto
 
 Projeto desenvolvido durante o programa Acelera, oferecida pela [ThoughtWorks](https://www.thoughtworks.com/) em parceria com a [Alura](https://www.alura.com.br/).
+
+### Documentação
+* [Documentação da API](https://carango-bom-api-grupo-2.herokuapp.com/swagger-ui.html)
