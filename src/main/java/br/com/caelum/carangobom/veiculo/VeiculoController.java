@@ -1,6 +1,7 @@
 package br.com.caelum.carangobom.veiculo;
 
 import br.com.caelum.carangobom.exception.VeiculoNotFoundException;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoDashboard;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoResponse;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoUpdateRequest;
@@ -32,6 +33,11 @@ public class VeiculoController {
     @GetMapping
     public ResponseEntity<List<VeiculoResponse>> getAll() {
         return ResponseEntity.ok(veiculoService.findAll());
+    }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<List<VeiculoDashboard>> dashboard() {
+        return ResponseEntity.ok(veiculoService.dashboard());
     }
 
     @PostMapping
