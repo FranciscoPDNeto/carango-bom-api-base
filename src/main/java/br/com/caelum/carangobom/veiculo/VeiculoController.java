@@ -3,6 +3,7 @@ package br.com.caelum.carangobom.veiculo;
 import br.com.caelum.carangobom.exception.VeiculoNotFoundException;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoResponse;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoUpdateRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,6 +47,19 @@ public class VeiculoController {
            .toUri();
 
        return ResponseEntity.created(uri).body(veiculoResponse);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<VeiculoResponse> update(
+        @Validated @PathVariable Long id,
+        @RequestBody @Valid VeiculoUpdateRequest veiculoRequest
+    ) {
+        try {
+            var veiculoResponse = veiculoService.update(id, veiculoRequest);
+            return ResponseEntity.ok(veiculoResponse);
+        } catch (VeiculoNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")

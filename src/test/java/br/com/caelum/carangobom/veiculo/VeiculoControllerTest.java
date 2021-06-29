@@ -4,6 +4,7 @@ import br.com.caelum.carangobom.exception.VeiculoNotFoundException;
 import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoResponse;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoUpdateRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -84,6 +86,48 @@ class VeiculoControllerTest {
     }
 
     @Test
+    void deveAtualizarVeiculoERetornarBody() throws Exception {
+        // given
+        URI uri = new URI(baseUri.getPath() + "/1");
+        var veiculoRequest = new VeiculoUpdateRequest();
+        veiculoRequest.setAno(1990);
+        var veiculoResponse = new VeiculoResponse(1L, "Uno", 2000, 40000L, new MarcaResponse(1L, "Fiat"));
+
+        // when
+        String jsonResponse = objectMapper.writeValueAsString(veiculoResponse);
+        String jsonRequest = objectMapper.writeValueAsString(veiculoRequest);
+        when(veiculoService.update(1L, veiculoRequest)).thenReturn(veiculoResponse);
+
+        // then
+        mvc.perform(
+            MockMvcRequestBuilders
+                .put(uri)
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().json(jsonResponse));
+    }
+
+    @Test
+    void deveRetornarNotFoundAoTentarAtualizarVeiculoNaoExistente() throws Exception {
+        // given
+        URI uri = new URI(baseUri.getPath() + "/1");
+        String jsonRequest = objectMapper.writeValueAsString(new VeiculoUpdateRequest());
+
+        // when
+        doThrow(new VeiculoNotFoundException()).when(veiculoService).update(anyLong(), any(VeiculoUpdateRequest.class));
+
+        // then
+        mvc.perform(
+            MockMvcRequestBuilders
+                .put(uri)
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
     void deveRetornarNoContentAoDeletarVeiculo() throws Exception {
         // given
         Long veiculoId = 42L;
@@ -91,7 +135,6 @@ class VeiculoControllerTest {
         Veiculo veiculo = new Veiculo(veiculoId);
 
         // when
-        String json = objectMapper.writeValueAsString(veiculo);
         doNothing().when(veiculoService).delete(veiculoId);
 
         // then
