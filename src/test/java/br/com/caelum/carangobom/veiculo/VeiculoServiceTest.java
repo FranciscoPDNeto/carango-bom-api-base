@@ -102,6 +102,16 @@ class VeiculoServiceTest {
     }
 
     @Test
+    void deveLancarExceptionQuandoVeiculoNaoExisteAoAtualizar() {
+        // then
+        assertThrows(
+            VeiculoNotFoundException.class,
+            () -> veiculoService.update(1L, any(VeiculoUpdateRequest.class))
+        );
+        verify(veiculoRepository, never()).save(any());
+    }
+
+    @Test
     void deveDeletarVeiculoExistente() {
         // given
         Veiculo veiculo = new Veiculo(1L);

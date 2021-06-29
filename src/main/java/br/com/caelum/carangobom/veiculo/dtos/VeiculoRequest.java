@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 @Data
@@ -26,7 +27,7 @@ public class VeiculoRequest {
     @Positive
     private Long valor;
 
-    @NonNull
+    @NotNull
     private Long marcaId;
 
      public Veiculo toModel() {
