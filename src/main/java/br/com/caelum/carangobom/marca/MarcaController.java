@@ -66,7 +66,7 @@ public class MarcaController {
     public ResponseEntity<Void> delete(@Validated @PathVariable Long id) {
         try {
             marcaService.delete(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (MarcaNotFoundException e){
             return ResponseEntity.notFound().build();
         }

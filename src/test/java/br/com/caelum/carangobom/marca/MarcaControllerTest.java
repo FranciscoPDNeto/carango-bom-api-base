@@ -166,7 +166,7 @@ class MarcaControllerTest {
         doNothing().when(marcaService).delete(1L);
 
         // then
-        mvc.perform(MockMvcRequestBuilders.delete(uri)).andExpect(MockMvcResultMatchers.status().isOk());
+        mvc.perform(MockMvcRequestBuilders.delete(uri)).andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
     @Test
