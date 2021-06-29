@@ -9,9 +9,10 @@ workflows:
       - build_and_deploy
       - hold: # <<< A job that will require manual approval in the CircleCI web application.
           type: approval # <<< This key-value pair will set your workflow to a status of "On Hold"
-      - heroku/deploy-via-git: # Use the pre-configured job, deploy-via-git
           requires:
             - build_and_deploy
+      - heroku/deploy-via-git: # Use the pre-configured job, deploy-via-git
+          requires:
             - hold
           filters:
             branches:
