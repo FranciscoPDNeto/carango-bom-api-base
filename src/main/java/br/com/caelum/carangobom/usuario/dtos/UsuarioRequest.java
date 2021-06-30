@@ -15,12 +15,12 @@ public class UsuarioRequest {
     private String username;
     @NotNull
     @NotEmpty
-    private String senha;
+    private String password;
 
     public Usuario toModel() {
         var usuario = new Usuario();
         usuario.setUsername(username);
-        usuario.setSenha(senha);
+        usuario.setPassword(password);
 
         return usuario;
     }
