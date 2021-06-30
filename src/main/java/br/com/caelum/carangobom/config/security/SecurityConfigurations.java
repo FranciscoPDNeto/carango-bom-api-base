@@ -2,7 +2,6 @@ package br.com.caelum.carangobom.config.security;
 
 import br.com.caelum.carangobom.usuario.UsuarioRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -46,16 +45,9 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.POST, "/usuarios").permitAll()
             .antMatchers(HttpMethod.POST, "/auth").permitAll()
             .anyRequest().authenticated()
-            .and().csrf().ignoringAntMatchers("/usuarios").ignoringAntMatchers("/auth").and()
+            .and().csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and().addFilterBefore(new AuthenticationByTokenFilter(tokenService, userRepository), UsernamePasswordAuthenticationFilter.class);
     }
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new BCryptPasswordEncoder().encode("1234"));
-    }
 }

@@ -3,7 +3,6 @@ package br.com.caelum.carangobom.config.security;
 import br.com.caelum.carangobom.config.security.dtos.TokenResponse;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +27,7 @@ public class AutenticationController {
     private TokenService tokenService;
 
     @PostMapping
-    public ResponseEntity<?> autenticate(@RequestBody @Valid UsuarioRequest userRequest) {
+    public ResponseEntity<TokenResponse> autenticate(@RequestBody @Valid UsuarioRequest userRequest) {
         UsernamePasswordAuthenticationToken loginData = userRequest.converter();
         try {
             Authentication authentication = authenticationManager.authenticate(loginData);
