@@ -3,6 +3,7 @@ package br.com.caelum.carangobom.veiculo;
 import br.com.caelum.carangobom.exception.VeiculoNotFoundException;
 import br.com.caelum.carangobom.marca.Marca;
 import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoDashboard;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoResponse;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoUpdateRequest;
@@ -59,6 +60,28 @@ class VeiculoServiceTest {
                 hasProperty("marca",
                     hasProperty("id", is(veiculos.get(0).getMarca().getId()))
                 )
+            )
+        ));
+    }
+
+    @Test
+    void deveRetornarVeiculoDashboardResponse() {
+        // given
+        List<VeiculoDashboard> dashboards = List.of(
+            new VeiculoDashboard(2L, 130000L, "Ford")
+        );
+
+        // when
+        when(veiculoRepository.groupVeiculosByMarca()).thenReturn(dashboards);
+        var expectedVeiculos = veiculoService.dashboard();
+
+        // then
+        assertThat(expectedVeiculos, hasSize(1));
+        assertThat(expectedVeiculos, contains(
+            allOf(
+                hasProperty("numVeiculos", is(dashboards.get(0).getNumVeiculos())),
+                hasProperty("somaValor", is(dashboards.get(0).getSomaValor())),
+                hasProperty("marca", is(dashboards.get(0).getMarca()))
             )
         ));
     }
