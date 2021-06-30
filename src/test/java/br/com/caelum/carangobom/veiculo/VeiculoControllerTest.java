@@ -2,6 +2,7 @@ package br.com.caelum.carangobom.veiculo;
 
 import br.com.caelum.carangobom.exception.VeiculoNotFoundException;
 import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoDashboard;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoResponse;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoUpdateRequest;
@@ -61,6 +62,23 @@ class VeiculoControllerTest {
 
         // then
         mvc.perform(MockMvcRequestBuilders.get(baseUri)).andExpect(MockMvcResultMatchers.content().json(json));
+    }
+
+    @Test
+    void deveRetornarVeiculoDashboard() throws Exception {
+        // given
+        var uri = new URI(baseUri.getPath() + "/dashboard");
+        List<VeiculoDashboard> dashboards = List.of(
+            new VeiculoDashboard(2L, 130000L, "Ford"),
+            new VeiculoDashboard(5L, 420000L, "BMW")
+        );
+
+        // when
+        String json = objectMapper.writeValueAsString(dashboards);
+        when(veiculoService.dashboard()).thenReturn(dashboards);
+
+        // then
+        mvc.perform(MockMvcRequestBuilders.get(uri)).andExpect(MockMvcResultMatchers.content().json(json));
     }
 
     @Test
