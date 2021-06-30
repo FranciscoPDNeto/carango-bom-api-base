@@ -1,5 +1,7 @@
 package br.com.caelum.carangobom.config.security;
 
+import br.com.caelum.carangobom.usuario.UsuarioRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,13 +14,16 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @Configuration
+@AllArgsConstructor
 public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 
-    @Autowired
     private AutenticationService autenticationService;
+    private TokenService tokenService;
+    private UsuarioRepository userRepository;
 
     @Override
     @Bean
@@ -35,11 +40,13 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
             .antMatchers(HttpMethod.GET, "/veiculos").permitAll()
-            .antMatchers(HttpMethod.GET, "/usuarios").permitAll()
+            .antMatchers(HttpMethod.GET, "/marcas").permitAll()
+            .antMatchers(HttpMethod.POST, "/usuarios").permitAll()
             .antMatchers(HttpMethod.POST, "/auth").permitAll()
             .anyRequest().authenticated()
             .and().csrf().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and().addFilterBefore(new AuthenticationByTokenFilter(tokenService, userRepository), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
