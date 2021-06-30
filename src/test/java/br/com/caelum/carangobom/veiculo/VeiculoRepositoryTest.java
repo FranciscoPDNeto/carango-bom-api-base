@@ -43,5 +43,6 @@ class VeiculoRepositoryTest {
         // then
         assertThat(dashboards.get(0).getNumVeiculos(), is(2L));
         assertThat(dashboards.get(0).getSomaValor(), is(40000L));
+        assertThat(dashboards.get(0).getMarca(), is("Fiat"));
     }
 }
