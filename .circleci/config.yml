@@ -14,9 +14,9 @@ workflows:
       - heroku/deploy-via-git: # Use the pre-configured job, deploy-via-git
           requires:
             - hold
-      filters:
-        branches:
-          only: master
+        filters:
+          branches:
+            only: master
   main:
     jobs:
       - build:
