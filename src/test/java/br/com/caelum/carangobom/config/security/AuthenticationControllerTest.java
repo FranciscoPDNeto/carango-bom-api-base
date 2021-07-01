@@ -54,6 +54,9 @@ class AuthenticationControllerTest {
         // given
         var uri = new URI("/auth");
         UsuarioRequest usuarioRequest = new UsuarioRequest("luiz", "123456");
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9" +
+            ".eyJpc3MiOiJBUEkgZG8gQ2FyYW5nb0JvbSIsInN1YiI6IjEiLCJpYXQiOjE2MjUxNjg1OTYsImV4cCI6MTYyNTI1NDk5Nn0" +
+            ".DEUmDxIqRUHU6jliQPf2NB7X59zbeyFSbNbpccSoEYc";
 
         // when
         String json = objectMapper.writeValueAsString(usuarioRequest);
@@ -63,7 +66,13 @@ class AuthenticationControllerTest {
 
         // then
         mvc
-            .perform(MockMvcRequestBuilders.post(uri).content(json).contentType(MediaType.APPLICATION_JSON))
+            .perform(
+                MockMvcRequestBuilders
+                    .post(uri)
+                    .content(json)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", token)
+            )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }
