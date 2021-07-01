@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -63,6 +64,7 @@ class MarcaControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test", password = "123456")
     void deveRetornarMarcaPeloId() throws Exception {
         // given
         var audi = new MarcaResponse(1L, "Audi");
@@ -80,6 +82,7 @@ class MarcaControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test", password = "123456")
     void deveRetornarNotFoundQuandoRecuperarMarcaComIdInexistente() throws Exception {
         // given
         URI uri = new URI(baseUri.getPath() + "/1");
@@ -92,6 +95,7 @@ class MarcaControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test", password = "123456")
     void deveResponderCreatedELocationQuandoCadastrarMarca() throws Exception {
         // given
         var nova = new MarcaRequest("Ferrari");
@@ -118,6 +122,7 @@ class MarcaControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test", password = "123456")
     void deveAlterarNomeQuandoMarcaExistir() throws Exception {
         // given
         URI uri = new URI(baseUri.getPath() + "/1");
@@ -140,6 +145,7 @@ class MarcaControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test", password = "123456")
     void naoDeveAlterarMarcaInexistente() throws Exception {
         // given
         URI uri = new URI(baseUri.getPath() + "/1");
@@ -157,6 +163,7 @@ class MarcaControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test", password = "123456")
     void deveDeletarMarcaExistente() throws Exception {
         // given
         URI uri = new URI(baseUri.getPath() + "/1");
@@ -170,6 +177,7 @@ class MarcaControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test", password = "123456")
     void naoDeveDeletarMarcaInexistente() throws Exception {
         // given
         URI uri = new URI(baseUri.getPath() + "/1");
@@ -182,6 +190,7 @@ class MarcaControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test", password = "123456")
     void deveRetornarErroDeValidacaoQuandoMandadoParametroInvalido() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post(baseUri)
                 .content("{\"nome\": null}")

@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -112,6 +113,7 @@ class UsuarioControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test", password = "123456")
     void deveRetornarListaDeUsuarios() throws Exception {
         // given
         var usuarios = List.of(
@@ -132,6 +134,7 @@ class UsuarioControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test", password = "123456")
     void deveExcluirUsuarioExistente() throws Exception {
         // given
         var uri = new URI(baseUri.getPath() + "/1");
@@ -147,6 +150,7 @@ class UsuarioControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test", password = "123456")
     void deveRetornarNotFoundAoTentarExcluirUsuarioInexistente() throws Exception {
         // given
         var uri = new URI(baseUri.getPath() + "/1");
