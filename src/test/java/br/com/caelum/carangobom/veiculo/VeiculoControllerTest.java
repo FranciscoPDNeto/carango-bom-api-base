@@ -41,7 +41,8 @@ class VeiculoControllerTest {
     @MockBean
     private VeiculoService veiculoService;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private final URI baseUri = new URI("/veiculos");
 

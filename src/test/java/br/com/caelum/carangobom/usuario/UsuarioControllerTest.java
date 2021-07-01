@@ -37,7 +37,8 @@ class UsuarioControllerTest {
     @MockBean
     private UsuarioService usuarioService;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private final URI baseUri = new URI("/usuarios");
 

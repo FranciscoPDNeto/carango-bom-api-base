@@ -30,7 +30,8 @@ class AuthenticationControllerTest {
     @MockBean
     private UsuarioRepository usuarioRepository;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     void deveRetornarBadRequestQuandoAutenticateUsuarioInvalido() throws Exception {

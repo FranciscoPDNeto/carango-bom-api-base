@@ -38,7 +38,8 @@ class MarcaControllerTest {
     @MockBean
     private MarcaService marcaService;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private final URI baseUri = new URI("/marcas");
 
