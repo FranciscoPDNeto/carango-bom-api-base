@@ -1,4 +1,4 @@
-INSERT INTO usuario(nome, senha) VALUES('João', '$2a$10$yUz4LCqpSlv9.YnAfOKoB.uFVZHDETRLD/R14S9X9ZV/OLw1EWgN6');
+INSERT INTO usuario(username, password) VALUES('João', '$2a$10$yUz4LCqpSlv9.YnAfOKoB.uFVZHDETRLD/R14S9X9ZV/OLw1EWgN6');
 
 INSERT INTO marca(nome) VALUES('Fiat');
 INSERT INTO marca(nome) VALUES('Volkswagen');
