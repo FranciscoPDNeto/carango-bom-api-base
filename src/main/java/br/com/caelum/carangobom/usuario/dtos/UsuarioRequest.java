@@ -4,6 +4,7 @@ import br.com.caelum.carangobom.usuario.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -21,7 +22,7 @@ public class UsuarioRequest {
     public Usuario toModel() {
         var usuario = new Usuario();
         usuario.setUsername(username);
-        usuario.setPassword(password);
+        usuario.setPassword(new BCryptPasswordEncoder().encode(password));
 
         return usuario;
     }
