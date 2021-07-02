@@ -146,6 +146,9 @@
 					</execution>
 				</executions>
 				<configuration>
+					<excludes>
+						<exclude>br/com/caelum/carangobom/config/security/DevSecurityConfigurations*</exclude>
+					</excludes>
 					<systemPropertyVariables>
 						<jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
 					</systemPropertyVariables>
