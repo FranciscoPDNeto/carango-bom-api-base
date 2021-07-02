@@ -138,7 +138,7 @@
 						</goals>
 						<configuration>
 							<excludes>
-								<exclude>br/com/caelum/carangobom/config/security/DevSecurityConfigurations.class</exclude>
+								<exclude>src/main/java/br/com/caelum/carangobom/config/security/DevSecurityConfigurations.class</exclude>
 							</excludes>
 							<!-- Sets the path to the file which contains the execution data. -->
 
