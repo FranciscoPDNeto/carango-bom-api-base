@@ -3,6 +3,7 @@ package br.com.caelum.carangobom.veiculo;
 import br.com.caelum.carangobom.exception.VeiculoNotFoundException;
 import br.com.caelum.carangobom.marca.Marca;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoDashboard;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoFilterRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoResponse;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoUpdateRequest;
@@ -25,8 +26,8 @@ public class VeiculoService {
         return optVeiculo.orElseThrow(VeiculoNotFoundException::new);
     }
 
-    public List<VeiculoResponse> findAll() {
-        return veiculoRepository.findAll()
+    public List<VeiculoResponse> findAll(VeiculoFilterRequest veiculoFilter) {
+        return veiculoRepository.findAll(new VeiculoFilterSpecification(veiculoFilter))
             .stream()
             .map(VeiculoResponse::fromModel)
             .collect(Collectors.toList());
