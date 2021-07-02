@@ -3,6 +3,8 @@ package br.com.caelum.carangobom.usuario.dtos;
 import br.com.caelum.carangobom.usuario.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -15,13 +17,17 @@ public class UsuarioRequest {
     private String username;
     @NotNull
     @NotEmpty
-    private String senha;
+    private String password;
 
     public Usuario toModel() {
         var usuario = new Usuario();
         usuario.setUsername(username);
-        usuario.setSenha(senha);
+        usuario.setPassword(new BCryptPasswordEncoder().encode(password));
 
         return usuario;
+    }
+
+    public UsernamePasswordAuthenticationToken converter() {
+        return new UsernamePasswordAuthenticationToken(username, password);
     }
 }
