@@ -2,6 +2,7 @@ package br.com.caelum.carangobom.veiculo;
 
 import br.com.caelum.carangobom.exception.VeiculoNotFoundException;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoDashboard;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoFilterRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoResponse;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoUpdateRequest;
@@ -16,11 +17,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("veiculos")
@@ -31,8 +34,15 @@ public class VeiculoController {
     private VeiculoService veiculoService;
 
     @GetMapping
-    public ResponseEntity<List<VeiculoResponse>> getAll() {
-        return ResponseEntity.ok(veiculoService.findAll());
+    public ResponseEntity<List<VeiculoResponse>> getAll(
+        @RequestParam Map<String,String> params
+    ) {
+        var veiculoFilter = new VeiculoFilterRequest(
+            params.getOrDefault("modelo", ""),
+            Integer.valueOf(params.getOrDefault("ano", "0")),
+            Long.valueOf(params.getOrDefault("marcaId", "0"))
+        );
+        return ResponseEntity.ok(veiculoService.findAll(veiculoFilter));
     }
 
     @GetMapping("/dashboard")
