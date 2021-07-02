@@ -7,7 +7,6 @@ import br.com.caelum.carangobom.usuario.dtos.PasswordRequest;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioRequest;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioResponse;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController

@@ -1,6 +1,5 @@
 package br.com.caelum.carangobom.config.security;
 
-import br.com.caelum.carangobom.exception.UsuarioNotFoundException;
 import br.com.caelum.carangobom.usuario.Usuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

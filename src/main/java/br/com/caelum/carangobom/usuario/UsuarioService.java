@@ -6,8 +6,6 @@ import br.com.caelum.carangobom.exception.UsuarioNotFoundException;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioRequest;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioResponse;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
