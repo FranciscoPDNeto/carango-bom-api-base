@@ -36,7 +36,7 @@ public class TokenService {
 
     public static String retrieveTokenFromHeaderValue(String authorizationHeaderValue) {
         if(authorizationHeaderValue == null || authorizationHeaderValue.isEmpty() || !authorizationHeaderValue.startsWith("Bearer ")) {
-            throw new UsuarioNotFoundException();
+            return null;
         }
 
         return authorizationHeaderValue.split("\\s+")[1];
