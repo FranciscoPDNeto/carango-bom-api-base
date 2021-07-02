@@ -137,6 +137,9 @@
 							<goal>report</goal>
 						</goals>
 						<configuration>
+							<excludes>
+								<exclude>br/com/caelum/carangobom/config/security/DevSecurityConfigurations.class</exclude>
+							</excludes>
 							<!-- Sets the path to the file which contains the execution data. -->
 
 							<dataFile>target/jacoco.exec</dataFile>
