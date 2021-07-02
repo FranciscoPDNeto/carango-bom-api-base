@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.net.URI;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -53,16 +54,17 @@ class AuthenticationControllerTest {
     void deveRetornarOkQuandoAutenticateUsuario() throws Exception {
         // given
         var uri = new URI("/auth");
-        UsuarioRequest usuarioRequest = new UsuarioRequest("luiz", "123456");
-        String token = "Bearer eyJhbGciOiJIUzI1NiJ9" +
-            ".eyJpc3MiOiJBUEkgZG8gQ2FyYW5nb0JvbSIsInN1YiI6IjEiLCJpYXQiOjE2MjUxNjg1OTYsImV4cCI6MTYyNTI1NDk5Nn0" +
-            ".DEUmDxIqRUHU6jliQPf2NB7X59zbeyFSbNbpccSoEYc";
+        UsuarioRequest usuarioRequest = new UsuarioRequest("Maria", "123456");
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9." +
+            "eyJpc3MiOiJBUEkgZG8gQ2FyYW5nb0JvbSIsInN1YiI6IjIiLCJpYXQiOjE2MjUxNjg1OTYsImV4cCI6MTYyNTI1NDk5Nn0." +
+            "sm5eU5HeqNu9QRtema5KgoE4g9N7lEaFAAil7cdiIKk";
 
         // when
         String json = objectMapper.writeValueAsString(usuarioRequest);
         var usuario = usuarioRequest.toModel();
         usuario.setId(1L);
         when(usuarioRepository.findByUsername(usuarioRequest.getUsername())).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.findById(anyLong())).thenReturn(Optional.of(usuario));
 
         // then
         mvc
