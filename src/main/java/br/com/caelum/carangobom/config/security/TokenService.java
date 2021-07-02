@@ -1,5 +1,6 @@
 package br.com.caelum.carangobom.config.security;
 
+import br.com.caelum.carangobom.exception.UsuarioNotFoundException;
 import br.com.caelum.carangobom.usuario.Usuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -31,6 +32,14 @@ public class TokenService {
             .setExpiration(expirationDate)
             .signWith(SignatureAlgorithm.HS256, secret)
             .compact();
+    }
+
+    public static String retrieveTokenFromHeaderValue(String authorizationHeaderValue) {
+        if(authorizationHeaderValue == null || authorizationHeaderValue.isEmpty() || !authorizationHeaderValue.startsWith("Bearer ")) {
+            throw new UsuarioNotFoundException();
+        }
+
+        return authorizationHeaderValue.split("\\s+")[1];
     }
 
     public boolean isValidToken(String token) {
