@@ -3,6 +3,7 @@ package br.com.caelum.carangobom.veiculo;
 import br.com.caelum.carangobom.exception.VeiculoNotFoundException;
 import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoDashboard;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoFilterRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoResponse;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoUpdateRequest;
@@ -60,10 +61,11 @@ class VeiculoControllerTest {
 
         // when
         String json = objectMapper.writeValueAsString(veiculos);
-        when(veiculoService.findAll()).thenReturn(veiculos);
+        when(veiculoService.findAll(any(VeiculoFilterRequest.class))).thenReturn(veiculos);
 
         // then
-        mvc.perform(MockMvcRequestBuilders.get(baseUri)).andExpect(MockMvcResultMatchers.content().json(json));
+        mvc.perform(MockMvcRequestBuilders.get(baseUri))
+            .andExpect(MockMvcResultMatchers.content().json(json));
     }
 
     @Test
