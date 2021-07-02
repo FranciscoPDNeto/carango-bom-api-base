@@ -46,7 +46,7 @@ class VeiculoRepositoryTest {
         "'', 2018, 0, 1",
         "'', 0, 2, 2"
     })
-    void deveRetornarTodosOsVeiculosQuandoNaoHaFiltros(
+    void deveRetornarTodosOsVeiculosQuandoHaFiltros(
         String modelo, Integer ano, Long marcaId, Integer expectedSize
     ) {
         // given

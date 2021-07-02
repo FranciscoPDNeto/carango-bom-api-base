@@ -12,8 +12,8 @@ import java.util.List;
 
 public class VeiculoFilterSpecification implements Specification<Veiculo> {
 
-    private transient final VeiculoFilterRequest veiculoFilter;
-    private transient final List<Predicate> predicates;
+    private final transient VeiculoFilterRequest veiculoFilter;
+    private final transient List<Predicate> predicates;
 
     public VeiculoFilterSpecification(VeiculoFilterRequest veiculoFilter) {
         this.veiculoFilter = veiculoFilter;
