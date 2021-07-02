@@ -4,6 +4,7 @@ import br.com.caelum.carangobom.exception.VeiculoNotFoundException;
 import br.com.caelum.carangobom.marca.Marca;
 import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoDashboard;
+import br.com.caelum.carangobom.veiculo.dtos.VeiculoFilterRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoResponse;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoUpdateRequest;
@@ -46,8 +47,8 @@ class VeiculoServiceTest {
         );
 
         // when
-        when(veiculoRepository.findAll()).thenReturn(veiculos);
-        var expectedVeiculos = veiculoService.findAll();
+        when(veiculoRepository.findAll(any(VeiculoFilterSpecification.class))).thenReturn(veiculos);
+        var expectedVeiculos = veiculoService.findAll(new VeiculoFilterRequest());
 
         // then
         assertThat(expectedVeiculos, hasSize(1));
