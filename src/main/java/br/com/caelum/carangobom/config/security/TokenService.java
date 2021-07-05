@@ -38,7 +38,9 @@ public class TokenService {
     }
 
     public static String retrieveTokenFromHeaderValue(String authorizationHeaderValue) {
-        if(authorizationHeaderValue == null || authorizationHeaderValue.isEmpty() || !authorizationHeaderValue.startsWith("Bearer ")) {
+        if(authorizationHeaderValue == null || 
+        authorizationHeaderValue.isEmpty() || 
+        !authorizationHeaderValue.startsWith("Bearer ")) {
             return null;
         }
 
