@@ -3,7 +3,7 @@ package br.com.caelum.carangobom.marca;
 import br.com.caelum.carangobom.exception.MarcaNotFoundException;
 import br.com.caelum.carangobom.marca.dtos.MarcaRequest;
 import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +11,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class MarcaService {
 
-    @Autowired
     private MarcaRepository marcaRepository;
 
     public List<MarcaResponse> findAllByNameOrder() {
