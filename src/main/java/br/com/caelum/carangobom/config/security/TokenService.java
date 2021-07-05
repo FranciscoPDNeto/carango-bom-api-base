@@ -4,6 +4,7 @@ import br.com.caelum.carangobom.usuario.Usuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 @Service
+@AllArgsConstructor
 public class TokenService {
 
     @Value("${carangobom.jwt.expiration}")
