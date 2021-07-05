@@ -163,4 +163,11 @@ class UsuarioControllerTest {
         mvc.perform(MockMvcRequestBuilders.delete(uri))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
+
+    @Test
+    void deveRetornarForbiddenAoTentarAlterarSenhaSemAutenticacao() throws Exception {
+        // then
+        mvc.perform(MockMvcRequestBuilders.put(baseUri))
+            .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
 }

@@ -4,6 +4,8 @@ import br.com.caelum.carangobom.usuario.Usuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 @Service
+@AllArgsConstructor
+@NoArgsConstructor
 public class TokenService {
 
     @Value("${carangobom.jwt.expiration}")
@@ -31,6 +35,16 @@ public class TokenService {
             .setExpiration(expirationDate)
             .signWith(SignatureAlgorithm.HS256, secret)
             .compact();
+    }
+
+    public static String retrieveTokenFromHeaderValue(String authorizationHeaderValue) {
+        if(authorizationHeaderValue == null || 
+        authorizationHeaderValue.isEmpty() || 
+        !authorizationHeaderValue.startsWith("Bearer ")) {
+            return null;
+        }
+
+        return authorizationHeaderValue.split("\\s+")[1];
     }
 
     public boolean isValidToken(String token) {

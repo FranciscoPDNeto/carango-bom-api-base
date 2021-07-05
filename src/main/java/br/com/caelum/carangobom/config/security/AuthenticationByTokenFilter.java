@@ -48,12 +48,6 @@ public class AuthenticationByTokenFilter extends OncePerRequestFilter {
     }
 
     private String retrieveToken(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-
-        if(token == null || token.isEmpty() || !token.startsWith("Bearer ")) {
-            return null;
-        }
-
-        return token.substring(7, token.length());
+        return TokenService.retrieveTokenFromHeaderValue(request.getHeader("Authorization"));
     }
 }
