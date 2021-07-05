@@ -51,7 +51,10 @@ public class UsuarioController {
     }
 
     @PutMapping
-    public ResponseEntity<Void> updatePassword(@Valid @RequestBody PasswordRequest password, @RequestHeader (name="Authorization") String token) {
+    public ResponseEntity<Void> updatePassword(
+        @Valid @RequestBody PasswordRequest password, 
+        @RequestHeader (name="Authorization") String token
+    ) {
         try {
             usuarioService.updatePassword(password.getPassword(), TokenService.retrieveTokenFromHeaderValue(token));
             return ResponseEntity.noContent().build();
