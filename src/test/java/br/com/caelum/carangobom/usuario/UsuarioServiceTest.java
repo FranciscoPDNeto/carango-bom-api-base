@@ -40,8 +40,6 @@ class UsuarioServiceTest {
         openMocks(this);
 
         usuarioService = new UsuarioService(repository, tokenService);
-
-        when(tokenService.isValidToken(anyString())).thenReturn(true);
     }
 
     @Test
@@ -128,6 +126,7 @@ class UsuarioServiceTest {
         final var token =
             ".eyJpc3MiOiJBUEkgZG8gQ2FyYW5nb0JvbSIsInN1YiI6IjgiLCJpYXQiOjE2MjUyNDgwMjksImV4cCI6MTYyNTMzNDQyOX0.tlX9KM1aLUjA_3w7oChzjqsUzDh4rh2vUR-rmYwuyZs";
 
+        when(tokenService.isValidToken(anyString())).thenReturn(true);
         when(tokenService.getUserId(token)).thenReturn(1L);
         when(repository.findById(1L)).thenReturn(Optional.of(usuario));
 
@@ -142,9 +141,17 @@ class UsuarioServiceTest {
         final var token =
             ".eyJpc3MiOiJBUEkgZG8gQ2FyYW5nb0JvbSIsInN1YiI6IjgiLCJpYXQiOjE2MjUyNDgwMjksImV4cCI6MTYyNTMzNDQyOX0.tlX9KM1aLUjA_3w7oChzjqsUzDh4rh2vUR-rmYwuyZs";
 
+        when(tokenService.isValidToken(anyString())).thenReturn(true);
         when(tokenService.getUserId(token)).thenReturn(1L);
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(UsuarioNotFoundException.class, () -> usuarioService.updatePassword("123456", token));
+    }
+
+    @Test
+    void naoDeveAtualizarSenhaDeUsuarioComTokenInvalido() {
+        when(tokenService.isValidToken(anyString())).thenReturn(false);
+
+        assertThrows(IllegalArgumentException.class, () -> usuarioService.updatePassword("12345", "invalidToken"));
     }
 }

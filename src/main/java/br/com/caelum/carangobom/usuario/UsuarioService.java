@@ -5,6 +5,7 @@ import br.com.caelum.carangobom.exception.UsuarioAlreadyRegisteredException;
 import br.com.caelum.carangobom.exception.UsuarioNotFoundException;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioRequest;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioResponse;
+import io.jsonwebtoken.lang.Assert;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class UsuarioService {
     }
 
     public void updatePassword(String password, String token) {
-        assert tokenService.isValidToken(token);
+        Assert.isTrue(tokenService.isValidToken(token), "The token must be valid");
 
         Long userId = tokenService.getUserId(token);
         Usuario user = repository.findById(userId).orElseThrow(UsuarioNotFoundException::new);
