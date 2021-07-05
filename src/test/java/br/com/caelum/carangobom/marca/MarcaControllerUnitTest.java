@@ -17,7 +17,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -136,7 +135,7 @@ class MarcaControllerUnitTest {
 
         // then
         var response = marcaController.delete(1L);
-        verify(marcaService).delete(1L);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
@@ -147,6 +146,5 @@ class MarcaControllerUnitTest {
         // then
         var response = marcaController.delete(1L);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(marcaService).delete(any());
     }
 }
