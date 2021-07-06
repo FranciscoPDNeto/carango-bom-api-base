@@ -15,6 +15,7 @@ public class DevSecurityConfigurations extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
             .antMatchers("/**").permitAll()
+            .and().cors()
             .and().csrf().disable();
     }
 }
