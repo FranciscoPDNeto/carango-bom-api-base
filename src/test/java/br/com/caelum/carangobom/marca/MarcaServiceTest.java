@@ -3,11 +3,9 @@ package br.com.caelum.carangobom.marca;
 import br.com.caelum.carangobom.exception.MarcaNotFoundException;
 import br.com.caelum.carangobom.marca.dtos.MarcaRequest;
 import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
+import org.mockito.Mock;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,16 +19,21 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.openMocks;
 
-@SpringBootTest
-@ActiveProfiles("test")
 class MarcaServiceTest {
 
-    @MockBean
+    @Mock
     private MarcaRepository marcaRepository;
 
-    @Autowired
     private MarcaService marcaService;
+
+    @BeforeEach
+    void configure() {
+        openMocks(this);
+
+        marcaService = new MarcaService(marcaRepository);
+    }
 
     @Test
     void deveRetornarListaDeMarcasOrdenadas() {
