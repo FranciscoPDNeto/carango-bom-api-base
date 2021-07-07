@@ -25,8 +25,9 @@ public class SwaggerConfigurations {
                 .globalOperationParameters(Arrays.asList(
                     new ParameterBuilder()
                         .name("Authorization")
-                        .description("Header para toker JWT")
+                        .description("Header para toker JWT. Necessariamente é do tipo Bearer.")
                         .modelRef(new ModelRef("string"))
+                        .scalarExample("Bearer <token>")
                         .parameterType("header")
                         .required(false)
                         .build()
