@@ -8,7 +8,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import br.com.caelum.carangobom.service.BaseCrudService;
@@ -51,7 +50,7 @@ public class MarcaController extends BaseCrudController<MarcaResponse, MarcaRequ
         return super.update(id, marcaRequest);
     }
 
-    @DeleteMapping("/{id}")
+    @Override
     @CacheEvict(value = {"brand", "brandList"}, allEntries = true)
     public ResponseEntity<Void> delete(@Validated @PathVariable Long id) {
         return super.delete(id);
