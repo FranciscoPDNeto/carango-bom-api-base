@@ -1,6 +1,8 @@
 package br.com.caelum.carangobom.controller;
 
 import br.com.caelum.carangobom.service.BaseCrudService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -19,12 +21,18 @@ import java.util.List;
 @Transactional
 public abstract class BaseCrudController<T1, T2> {
 
+    protected boolean useCache() {
+        return false;
+    }
+
     @GetMapping
+    @Cacheable(value = "list", condition = "#useCache")
     public ResponseEntity<List<T1>> getAll() {
         return ResponseEntity.ok(getService().findAll());
     }
 
     @GetMapping("/{id}")
+    @Cacheable(value = "object", condition = "#useCache")
     public ResponseEntity<T1> getById(@Validated @PathVariable Long id) {
         try {
             T1 response = getService().findById(id);
@@ -35,6 +43,7 @@ public abstract class BaseCrudController<T1, T2> {
     }
 
     @PostMapping
+    @CacheEvict(value = {"object", "list"}, condition = "#useCache", allEntries = true)
     public ResponseEntity<T1> save(@Valid @RequestBody T2 request, UriComponentsBuilder uriComponentsBuilder) {
         try {
             var response = getService().save(request);
@@ -47,6 +56,7 @@ public abstract class BaseCrudController<T1, T2> {
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = {"object", "list"}, condition = "#useCache", allEntries = true)
     public ResponseEntity<Void> delete(@Validated @PathVariable Long id) {
         try {
             getService().delete(id);
@@ -57,6 +67,7 @@ public abstract class BaseCrudController<T1, T2> {
     }
 
     @PutMapping("/{id}")
+    @CacheEvict(value = {"object", "list"}, condition = "#useCache", allEntries = true)
     public ResponseEntity<T1> update(@Validated @PathVariable Long id, @RequestBody @Valid T2 request) {
         try {
             var response = getService().update(id, request);
