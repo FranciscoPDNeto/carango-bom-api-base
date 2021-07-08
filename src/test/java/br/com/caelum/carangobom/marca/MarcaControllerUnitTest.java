@@ -47,11 +47,11 @@ class MarcaControllerUnitTest {
         );
 
         // when
-        when(marcaService.findAllByNameOrder())
+        when(marcaService.findAll())
             .thenReturn(marcas);
 
         // then
-        var response = marcaController.getAllByNameOrder();
+        var response = marcaController.getAll();
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(marcas, response.getBody());
     }

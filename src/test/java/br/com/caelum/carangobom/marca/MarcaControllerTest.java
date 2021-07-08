@@ -57,7 +57,7 @@ class MarcaControllerTest {
 
         // when
         String json = objectMapper.writeValueAsString(marcas);
-        when(marcaService.findAllByNameOrder())
+        when(marcaService.findAll())
             .thenReturn(marcas);
 
         // then

@@ -3,6 +3,7 @@ package br.com.caelum.carangobom.marca;
 import br.com.caelum.carangobom.exception.MarcaNotFoundException;
 import br.com.caelum.carangobom.marca.dtos.MarcaRequest;
 import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
+import br.com.caelum.carangobom.service.BaseCrudService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class MarcaService {
+public class MarcaService implements BaseCrudService<MarcaResponse, MarcaRequest> {
 
     private MarcaRepository marcaRepository;
 
@@ -23,6 +24,11 @@ public class MarcaService {
             .collect(Collectors.toList());
     }
 
+    @Override
+    public List findAll() {
+        return findAllByNameOrder();
+    }
+
     public MarcaResponse findById(Long id) {
         Optional<Marca> marcaOptional = marcaRepository.findById(id);
         var marca = marcaOptional.orElseThrow(MarcaNotFoundException::new);
@@ -30,10 +36,12 @@ public class MarcaService {
         return MarcaResponse.fromModel(marca);
     }
 
+    @Override
     public MarcaResponse save(MarcaRequest marcaRequest) {
         return MarcaResponse.fromModel(marcaRepository.save(marcaRequest.toModel()));
     }
 
+    @Override
     public MarcaResponse update(Long id, MarcaRequest marcaRequest) {
         var marcaOptional = marcaRepository.findById(id);
         var marca = marcaOptional.orElseThrow(MarcaNotFoundException::new);
