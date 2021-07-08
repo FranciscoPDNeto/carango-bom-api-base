@@ -25,6 +25,8 @@ public class VeiculoFilterSpecification implements Specification<Veiculo> {
         filterModelo(root, criteriaBuilder);
         filterMarca(root, criteriaBuilder);
         filterAno(root, criteriaBuilder);
+        filterValorMaiorIgual(root, criteriaBuilder);
+        filterValorMenorIgual(root, criteriaBuilder);
 
         return criteriaBuilder.and(
             predicates.toArray(new Predicate[predicates.size()])
@@ -36,6 +38,26 @@ public class VeiculoFilterSpecification implements Specification<Veiculo> {
             predicates.add(
                 criteriaBuilder.equal(
                     root.get("ano"), veiculoFilter.getAno()
+                )
+            );
+        }
+    }
+
+    private void filterValorMaiorIgual(Root<Veiculo> root, CriteriaBuilder criteriaBuilder) {
+        if(veiculoFilter.getValorMaiorIgual() > 0) {
+            predicates.add(
+                criteriaBuilder.greaterThanOrEqualTo(
+                    root.get("valor"), veiculoFilter.getValorMaiorIgual()
+                )
+            );
+        }
+    }
+
+    private void filterValorMenorIgual(Root<Veiculo> root, CriteriaBuilder criteriaBuilder) {
+        if(veiculoFilter.getValorMenorIgual() < Long.MAX_VALUE) {
+            predicates.add(
+                criteriaBuilder.lessThanOrEqualTo(
+                    root.get("valor"), veiculoFilter.getValorMenorIgual()
                 )
             );
         }
