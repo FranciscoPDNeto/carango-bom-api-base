@@ -17,4 +17,6 @@ public interface VeiculoRepository extends JpaRepository<Veiculo, Long>, JpaSpec
     List<VeiculoDashboard> groupVeiculosByMarca();
 
     List<Veiculo> findAll(Specification<Veiculo> specification);
+
+    boolean existsByMarca_Id(Long id);
 }

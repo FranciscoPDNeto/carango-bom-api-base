@@ -1,9 +1,11 @@
 package br.com.caelum.carangobom.marca;
 
 import br.com.caelum.carangobom.exception.MarcaNotFoundException;
+import br.com.caelum.carangobom.exception.MarcaWithVeiculoException;
 import br.com.caelum.carangobom.marca.dtos.MarcaRequest;
 import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
 import br.com.caelum.carangobom.basecrud.BaseCrudService;
+import br.com.caelum.carangobom.veiculo.VeiculoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 public class MarcaService implements BaseCrudService<MarcaResponse, MarcaRequest> {
 
     private MarcaRepository marcaRepository;
+    private VeiculoRepository veiculoRepository;
 
     public List<MarcaResponse> findAllByNameOrder() {
         return marcaRepository.findAllByOrderByNome()
@@ -53,6 +56,10 @@ public class MarcaService implements BaseCrudService<MarcaResponse, MarcaRequest
     public void delete(Long id) {
         var marcaOptional = marcaRepository.findById(id);
         var marca = marcaOptional.orElseThrow(MarcaNotFoundException::new);
+
+        if (veiculoRepository.existsByMarca_Id(id)) {
+            throw new MarcaWithVeiculoException();
+        }
 
         marcaRepository.delete(marca);
     }

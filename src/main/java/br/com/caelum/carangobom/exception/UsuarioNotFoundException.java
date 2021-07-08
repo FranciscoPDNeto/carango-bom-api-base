@@ -1,7 +1,7 @@
 package br.com.caelum.carangobom.exception;
 
-public class UsuarioNotFoundException extends RuntimeException {
+public class UsuarioNotFoundException extends NotFoundException {
     public UsuarioNotFoundException() {
-        super("Usuário não encontrado.");
+        super("Usuário");
     }
 }

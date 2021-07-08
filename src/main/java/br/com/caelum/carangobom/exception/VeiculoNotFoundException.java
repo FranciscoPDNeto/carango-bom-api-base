@@ -1,7 +1,7 @@
 package br.com.caelum.carangobom.exception;
 
-public class VeiculoNotFoundException extends RuntimeException {
+public class VeiculoNotFoundException extends NotFoundException {
     public VeiculoNotFoundException() {
-        super("Veículo não encontrado.");
+        super("Veículo");
     }
 }

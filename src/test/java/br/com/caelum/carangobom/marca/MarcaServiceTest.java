@@ -3,6 +3,7 @@ package br.com.caelum.carangobom.marca;
 import br.com.caelum.carangobom.exception.MarcaNotFoundException;
 import br.com.caelum.carangobom.marca.dtos.MarcaRequest;
 import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
+import br.com.caelum.carangobom.veiculo.VeiculoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -26,13 +27,16 @@ class MarcaServiceTest {
     @Mock
     private MarcaRepository marcaRepository;
 
+    @Mock
+    private VeiculoRepository veiculoRepository;
+
     private MarcaService marcaService;
 
     @BeforeEach
     void configure() {
         openMocks(this);
 
-        marcaService = new MarcaService(marcaRepository);
+        marcaService = new MarcaService(marcaRepository, veiculoRepository);
     }
 
     @Test

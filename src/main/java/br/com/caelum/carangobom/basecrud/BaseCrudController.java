@@ -1,7 +1,11 @@
 package br.com.caelum.carangobom.basecrud;
 
+import br.com.caelum.carangobom.exception.NotFoundException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -36,7 +40,7 @@ public abstract class BaseCrudController<T1, T2> {
         try {
             T1 response = getService().findById(id);
             return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
+        } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -50,7 +54,11 @@ public abstract class BaseCrudController<T1, T2> {
 
             return ResponseEntity.created(uri).body(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            HttpHeaders header = new HttpHeaders();
+            header.setContentType(MediaType.TEXT_PLAIN);
+            header.set("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).build();
         }
     }
 
@@ -60,8 +68,14 @@ public abstract class BaseCrudController<T1, T2> {
         try {
             getService().delete(id);
             return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
+        } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
+        } catch (RuntimeException e) {
+            HttpHeaders header = new HttpHeaders();
+            header.setContentType(MediaType.TEXT_PLAIN);
+            header.set("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(header).build();
         }
     }
 
@@ -71,7 +85,7 @@ public abstract class BaseCrudController<T1, T2> {
         try {
             var response = getService().update(id, request);
             return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
+        } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }

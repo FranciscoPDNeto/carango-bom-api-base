@@ -1,7 +1,7 @@
 package br.com.caelum.carangobom.exception;
 
-public class MarcaNotFoundException extends RuntimeException {
+public class MarcaNotFoundException extends NotFoundException {
     public MarcaNotFoundException() {
-        super("Marca não encontrada.");
+        super("Marca");
     }
 }
