@@ -6,14 +6,15 @@ import br.com.caelum.carangobom.veiculo.dtos.VeiculoFilterRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 @DataJpaTest
 class VeiculoRepositoryTest {
@@ -40,17 +41,21 @@ class VeiculoRepositoryTest {
 
     @ParameterizedTest
     @CsvSource({
-        "Gol, 0, 0, 2",
-        "Uno, 0, 0, 1",
-        "'', 2020, 0, 3",
-        "'', 2018, 0, 1",
-        "'', 0, 2, 2"
+        "Gol, 0, 0, 0, " + Long.MAX_VALUE + ", 2",
+        "Uno, 0, 0, 0, " + Long.MAX_VALUE + ", 1",
+        "'', 2020, 0, 0, " + Long.MAX_VALUE + ", 3",
+        "'', 2018, 0, 0, " + Long.MAX_VALUE + ", 1",
+        "'', 0, 2, 0, " + Long.MAX_VALUE + ", 2",
+        "'', 0, 0, 50000, " + Long.MAX_VALUE + ", 2",
+        "'', 0, 0, 40000, " + Long.MAX_VALUE + ", 3",
+        "'', 0, 0, 0, 40000, 1",
+        "'', 0, 0, 0, 42000, 2"
     })
     void deveRetornarTodosOsVeiculosQuandoHaFiltros(
-        String modelo, Integer ano, Long marcaId, Integer expectedSize
+        String modelo, Integer ano, Long marcaId, Long valorMaiorIgual, Long valorMenorIgual, Integer expectedSize
     ) {
         // given
-        var veiculoFilter = new VeiculoFilterRequest(modelo, ano, marcaId);
+        var veiculoFilter = new VeiculoFilterRequest(modelo, ano, marcaId, valorMaiorIgual, valorMenorIgual);
 
         // when
         List<Veiculo> veiculos = veiculoRepository.findAll(
@@ -64,8 +69,12 @@ class VeiculoRepositoryTest {
                 assertThat(v.getModelo(), is(modelo));
             else if(ano > 0)
                 assertThat(v.getAno(), is(ano));
-            else
+            else if(marcaId > 0)
                 assertThat(v.getMarca().getId(), is(marcaId));
+            else if (valorMaiorIgual > 0)
+                assertThat(v.getValor(), greaterThanOrEqualTo(valorMaiorIgual));
+            else if (valorMenorIgual < Long.MAX_VALUE)
+                assertThat(v.getValor(), lessThanOrEqualTo(valorMenorIgual));
         });
     }
 }

@@ -52,6 +52,7 @@ public class MarcaController extends BaseCrudController<MarcaResponse, MarcaRequ
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = {"brand", "brandList"}, allEntries = true)
     public ResponseEntity<Void> delete(@Validated @PathVariable Long id) {
         return super.delete(id);
     }

@@ -6,6 +6,8 @@ import br.com.caelum.carangobom.veiculo.dtos.VeiculoFilterRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoRequest;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoResponse;
 import br.com.caelum.carangobom.veiculo.dtos.VeiculoUpdateRequest;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -33,14 +36,23 @@ public class VeiculoController {
 
     private VeiculoService veiculoService;
 
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "modelo", dataType = "String", paramType = "query"),
+        @ApiImplicitParam(name = "ano", dataType = "long", paramType = "query"),
+        @ApiImplicitParam(name = "marcaId", dataType = "long", paramType = "query"),
+        @ApiImplicitParam(name = "valor>", dataType = "long", paramType = "query"),
+        @ApiImplicitParam(name = "valor<", dataType = "long", paramType = "query")
+    })
     @GetMapping
     public ResponseEntity<List<VeiculoResponse>> getAll(
-        @RequestParam Map<String,String> params
+        @RequestParam @ApiIgnore Map<String, String> params
     ) {
         var veiculoFilter = new VeiculoFilterRequest(
             params.getOrDefault("modelo", ""),
             Integer.valueOf(params.getOrDefault("ano", "0")),
-            Long.valueOf(params.getOrDefault("marcaId", "0"))
+            Long.valueOf(params.getOrDefault("marcaId", "0")),
+            Long.valueOf(params.getOrDefault("valor>", "0")),
+            Long.valueOf(params.getOrDefault("valor<", String.valueOf(Long.MAX_VALUE)))
         );
         return ResponseEntity.ok(veiculoService.findAll(veiculoFilter));
     }

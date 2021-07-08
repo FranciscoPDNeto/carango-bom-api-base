@@ -13,4 +13,6 @@ public class VeiculoFilterRequest {
     private String modelo = "";
     private Integer ano = 0;
     private Long marcaId = 0L;
+    private Long valorMaiorIgual = 0L;
+    private Long valorMenorIgual = Long.MAX_VALUE;
 }
