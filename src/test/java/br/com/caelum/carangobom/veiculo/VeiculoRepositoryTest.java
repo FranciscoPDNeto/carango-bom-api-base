@@ -6,7 +6,6 @@ import br.com.caelum.carangobom.veiculo.dtos.VeiculoFilterRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -50,7 +49,7 @@ class VeiculoRepositoryTest {
         String modelo, Integer ano, Long marcaId, Integer expectedSize
     ) {
         // given
-        var veiculoFilter = new VeiculoFilterRequest(modelo, ano, marcaId);
+        var veiculoFilter = new VeiculoFilterRequest(modelo, ano, marcaId, 0L, Long.MAX_VALUE);
 
         // when
         List<Veiculo> veiculos = veiculoRepository.findAll(
