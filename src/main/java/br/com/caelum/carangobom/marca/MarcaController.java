@@ -4,6 +4,8 @@ import br.com.caelum.carangobom.exception.MarcaNotFoundException;
 import br.com.caelum.carangobom.marca.dtos.MarcaRequest;
 import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -29,11 +31,13 @@ public class MarcaController {
     private MarcaService marcaService;
 
     @GetMapping
+    @Cacheable(value = "brandList")
     public ResponseEntity<List<MarcaResponse>> getAllByNameOrder() {
         return ResponseEntity.ok(marcaService.findAllByNameOrder());
     }
 
     @GetMapping("/{id}")
+    @Cacheable(value = "brand")
     public ResponseEntity<MarcaResponse> getById(@Validated @PathVariable Long id) {
         try {
             var marcaResponse = marcaService.findById(id);
@@ -44,6 +48,7 @@ public class MarcaController {
     }
 
     @PostMapping
+    @CacheEvict(value = {"brand", "brandList"}, allEntries = true)
     public ResponseEntity<MarcaResponse> save(@Valid @RequestBody MarcaRequest marcaRequest, UriComponentsBuilder uriBuilder) {
         var marcaResponse = marcaService.save(marcaRequest);
         var uri = uriBuilder.path("/marcas/{id}").buildAndExpand(marcaResponse.getId()).toUri();
@@ -52,6 +57,7 @@ public class MarcaController {
     }
 
     @PutMapping("/{id}")
+    @CacheEvict(value = {"brand", "brandList"}, allEntries = true)
     public ResponseEntity<MarcaResponse> update(@Validated @PathVariable Long id, @Valid @RequestBody MarcaRequest marcaRequest) {
 
         try {
@@ -63,6 +69,7 @@ public class MarcaController {
     }
 
     @DeleteMapping("/{id}")
+    @CacheEvict(value = {"brand", "brandList"}, allEntries = true)
     public ResponseEntity<Void> delete(@Validated @PathVariable Long id) {
         try {
             marcaService.delete(id);
