@@ -1,4 +1,4 @@
-package br.com.caelum.carangobom.service;
+package br.com.caelum.carangobom.basecrud;
 
 import java.util.List;
 

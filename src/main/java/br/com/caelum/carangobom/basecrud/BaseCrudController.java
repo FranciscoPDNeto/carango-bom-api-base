@@ -1,6 +1,5 @@
-package br.com.caelum.carangobom.controller;
+package br.com.caelum.carangobom.basecrud;
 
-import br.com.caelum.carangobom.service.BaseCrudService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;

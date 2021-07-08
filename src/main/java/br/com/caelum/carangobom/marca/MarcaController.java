@@ -1,10 +1,10 @@
 package br.com.caelum.carangobom.marca;
 
-import br.com.caelum.carangobom.controller.BaseCrudController;
+import br.com.caelum.carangobom.basecrud.BaseCrudController;
 import br.com.caelum.carangobom.marca.dtos.MarcaRequest;
 import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
 import lombok.AllArgsConstructor;
-import br.com.caelum.carangobom.service.BaseCrudService;
+import br.com.caelum.carangobom.basecrud.BaseCrudService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;

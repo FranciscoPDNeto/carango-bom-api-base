@@ -3,7 +3,7 @@ package br.com.caelum.carangobom.marca;
 import br.com.caelum.carangobom.exception.MarcaNotFoundException;
 import br.com.caelum.carangobom.marca.dtos.MarcaRequest;
 import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
-import br.com.caelum.carangobom.service.BaseCrudService;
+import br.com.caelum.carangobom.basecrud.BaseCrudService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
