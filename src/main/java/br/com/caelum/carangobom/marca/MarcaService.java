@@ -54,7 +54,7 @@ public class MarcaService implements BaseCrudService<MarcaResponse, MarcaRequest
         var marcaOptional = marcaRepository.findById(id);
         var marca = marcaOptional.orElseThrow(MarcaNotFoundException::new);
 
-        if (veiculoRepository.existsByMarca_Id(id)) {
+        if (veiculoRepository.existsByMarcaId(id)) {
             throw new MarcaWithVeiculoException();
         }
 

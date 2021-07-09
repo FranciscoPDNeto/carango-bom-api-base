@@ -143,7 +143,8 @@ class UsuarioServiceTest {
 
     @Test
     void deveLancarExceptionQuandoTentarChamarUpdatePorId() {
-        assertThrows(RuntimeException.class, () -> usuarioService.update(1L, new UsuarioRequest("Jose", "password")));
+        var usuarioRequest = new UsuarioRequest("Jose", "password");
+        assertThrows(RuntimeException.class, () -> usuarioService.update(1L, usuarioRequest));
     }
 
     @Test

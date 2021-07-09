@@ -18,5 +18,5 @@ public interface VeiculoRepository extends JpaRepository<Veiculo, Long>, JpaSpec
 
     List<Veiculo> findAll(Specification<Veiculo> specification);
 
-    boolean existsByMarca_Id(Long id);
+    boolean existsByMarcaId(Long id);
 }

@@ -105,7 +105,7 @@ class MarcaServiceTest {
 
         // when
         when(marcaRepository.findById(marca.getId())).thenReturn(Optional.of(marca));
-        when(veiculoRepository.existsByMarca_Id(anyLong())).thenReturn(true);
+        when(veiculoRepository.existsByMarcaId(anyLong())).thenReturn(true);
 
         // then
         assertThrows(MarcaWithVeiculoException.class, () -> marcaService.delete(1L));
