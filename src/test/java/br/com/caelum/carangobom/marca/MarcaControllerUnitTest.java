@@ -1,6 +1,7 @@
 package br.com.caelum.carangobom.marca;
 
 import br.com.caelum.carangobom.exception.MarcaNotFoundException;
+import br.com.caelum.carangobom.exception.MarcaWithVeiculoException;
 import br.com.caelum.carangobom.marca.dtos.MarcaRequest;
 import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -146,5 +147,15 @@ class MarcaControllerUnitTest {
         // then
         var response = marcaController.delete(1L);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void naoDeveDeletarMarcaUsadaPorVeiculo() throws Exception {
+        // when
+        doThrow(new MarcaWithVeiculoException()).when(marcaService).delete(anyLong());
+
+        // then
+        var response = marcaController.delete(1L);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }

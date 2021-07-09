@@ -1,6 +1,7 @@
 package br.com.caelum.carangobom.marca;
 
 import br.com.caelum.carangobom.exception.MarcaNotFoundException;
+import br.com.caelum.carangobom.exception.MarcaWithVeiculoException;
 import br.com.caelum.carangobom.marca.dtos.MarcaRequest;
 import br.com.caelum.carangobom.marca.dtos.MarcaResponse;
 import br.com.caelum.carangobom.veiculo.VeiculoRepository;
@@ -17,6 +18,7 @@ import static org.hamcrest.Matchers.equalToObject;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,7 +52,7 @@ class MarcaServiceTest {
 
         // when
         when(marcaRepository.findAllByOrderByNome()).thenReturn(marcas);
-        var expectedMarcas = marcaService.findAllByNameOrder();
+        var expectedMarcas = marcaService.findAll();
 
         // then
         assertEquals(3, expectedMarcas.size());
@@ -93,6 +95,20 @@ class MarcaServiceTest {
     void deveLancarExceptionQuandoTentarDeletarMarcaInexistente() {
         // then
         assertThrows(MarcaNotFoundException.class, () -> marcaService.delete(1L));
+        verify(marcaRepository, never()).delete(any());
+    }
+
+    @Test
+    void deveLancarExceptionQuandoTentarDeletarMarcaComVeiculoCadastrado() {
+        //given
+        var marca = new Marca(1L);
+
+        // when
+        when(marcaRepository.findById(marca.getId())).thenReturn(Optional.of(marca));
+        when(veiculoRepository.existsByMarca_Id(anyLong())).thenReturn(true);
+
+        // then
+        assertThrows(MarcaWithVeiculoException.class, () -> marcaService.delete(1L));
         verify(marcaRepository, never()).delete(any());
     }
 

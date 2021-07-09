@@ -20,16 +20,12 @@ public class MarcaService implements BaseCrudService<MarcaResponse, MarcaRequest
     private MarcaRepository marcaRepository;
     private VeiculoRepository veiculoRepository;
 
-    public List<MarcaResponse> findAllByNameOrder() {
+    @Override
+    public List<MarcaResponse> findAll() {
         return marcaRepository.findAllByOrderByNome()
             .stream()
             .map(MarcaResponse::fromModel)
             .collect(Collectors.toList());
-    }
-
-    @Override
-    public List findAll() {
-        return findAllByNameOrder();
     }
 
     public MarcaResponse findById(Long id) {
@@ -53,6 +49,7 @@ public class MarcaService implements BaseCrudService<MarcaResponse, MarcaRequest
         return MarcaResponse.fromModel(marca);
     }
 
+    @Override
     public void delete(Long id) {
         var marcaOptional = marcaRepository.findById(id);
         var marca = marcaOptional.orElseThrow(MarcaNotFoundException::new);
