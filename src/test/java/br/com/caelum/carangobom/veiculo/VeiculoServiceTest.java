@@ -127,10 +127,12 @@ class VeiculoServiceTest {
 
     @Test
     void deveLancarExceptionQuandoVeiculoNaoExisteAoAtualizar() {
+        // given
+        var veiculoUpdateRequest = any(VeiculoUpdateRequest.class);
         // then
         assertThrows(
             VeiculoNotFoundException.class,
-            () -> veiculoService.update(1L, any(VeiculoUpdateRequest.class))
+            () -> veiculoService.update(1L, veiculoUpdateRequest)
         );
         verify(veiculoRepository, never()).save(any());
     }
