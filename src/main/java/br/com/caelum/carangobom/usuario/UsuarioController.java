@@ -1,53 +1,39 @@
 package br.com.caelum.carangobom.usuario;
 
+import br.com.caelum.carangobom.basecrud.BaseCrudController;
+import br.com.caelum.carangobom.basecrud.BaseCrudService;
 import br.com.caelum.carangobom.config.security.TokenService;
-import br.com.caelum.carangobom.exception.UsuarioAlreadyRegisteredException;
 import br.com.caelum.carangobom.exception.UsuarioNotFoundException;
 import br.com.caelum.carangobom.usuario.dtos.PasswordRequest;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioRequest;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.net.URI;
 
 @RestController
-@RequestMapping("usuarios")
-@Transactional
+@RequestMapping("/usuarios")
 @AllArgsConstructor
-public class UsuarioController {
+public class UsuarioController extends BaseCrudController<UsuarioResponse, UsuarioRequest> {
 
     private UsuarioService usuarioService;
 
-    @PostMapping
-    public ResponseEntity<UsuarioResponse> save(@Valid @RequestBody UsuarioRequest usuarioRequest, UriComponentsBuilder uriBuilder) {
-        try {
-            var usuarioResponse = usuarioService.registerNewUser(usuarioRequest);
-            var uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(usuarioResponse.getId()).toUri();
-            return ResponseEntity.created(uri).body(usuarioResponse);
-        } catch (UsuarioAlreadyRegisteredException exception) {
-            return ResponseEntity.badRequest().build();
-        }
+    @Override
+    public BaseCrudService<UsuarioResponse, UsuarioRequest> getService() {
+        return usuarioService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<UsuarioResponse>> getAll() {
-        return ResponseEntity.ok(usuarioService.findAll());
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@Validated @PathVariable Long id) {
-        try {
-            usuarioService.delete(id);
-            return ResponseEntity.noContent().build();
-        } catch (UsuarioNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @Override
+    public URI getPathFromResponse(UsuarioResponse response, UriComponentsBuilder uriComponentsBuilder) {
+        return uriComponentsBuilder.path("/usuarios/{id}").buildAndExpand(response.getId()).toUri();
     }
 
     @PutMapping

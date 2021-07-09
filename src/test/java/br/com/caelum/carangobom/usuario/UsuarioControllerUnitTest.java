@@ -2,6 +2,7 @@ package br.com.caelum.carangobom.usuario;
 
 import br.com.caelum.carangobom.exception.UsuarioAlreadyRegisteredException;
 import br.com.caelum.carangobom.exception.UsuarioNotFoundException;
+import br.com.caelum.carangobom.exception.VeiculoNotFoundException;
 import br.com.caelum.carangobom.usuario.dtos.PasswordRequest;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioRequest;
 import br.com.caelum.carangobom.usuario.dtos.UsuarioResponse;
@@ -44,7 +45,7 @@ class UsuarioControllerUnitTest {
     @Test
     void deveCadastrarComSucesso() {
         var usuarioResponse = new UsuarioResponse(1L, "Jose");
-        when(usuarioService.registerNewUser(any())).thenReturn(usuarioResponse);
+        when(usuarioService.save(any())).thenReturn(usuarioResponse);
 
         ResponseEntity<UsuarioResponse> response =
             usuarioController.save(new UsuarioRequest("Jose", "1234"), uriBuilder);
@@ -55,7 +56,7 @@ class UsuarioControllerUnitTest {
 
     @Test
     void deveRetornarBadRequestAoTentarCadastrarUsuarioQueJaExista() {
-        doThrow(UsuarioAlreadyRegisteredException.class).when(usuarioService).registerNewUser(any());
+        doThrow(UsuarioAlreadyRegisteredException.class).when(usuarioService).save(any());
 
         ResponseEntity<UsuarioResponse> response =
             usuarioController.save(new UsuarioRequest("Jose", "1234"), uriBuilder);
@@ -78,6 +79,27 @@ class UsuarioControllerUnitTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(usuarios, response.getBody());
+    }
+
+    @Test
+    void deveRetornarUsuarioPorId() {
+        var usuarioResponse = new UsuarioResponse(1L, "jose");
+        when(usuarioService.findById(1L)).thenReturn(usuarioResponse);
+
+        var response = usuarioController.getById(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(usuarioResponse, response.getBody());
+    }
+
+    @Test
+    void deveRetornarNotFoundQuandoRecuperarUsuarioComIdInexistente() {
+        // when
+        doThrow(new VeiculoNotFoundException()).when(usuarioService).findById(anyLong());
+
+        // then
+        var response = usuarioController.getById(1L);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test

@@ -56,7 +56,7 @@ class UsuarioControllerTest {
         // when
         String json = objectMapper.writeValueAsString(usuarioRequest);
         String jsonResult = objectMapper.writeValueAsString(usuarioResponse);
-        when(usuarioService.registerNewUser(usuarioRequest))
+        when(usuarioService.save(usuarioRequest))
             .thenReturn(usuarioResponse);
 
         // then
@@ -74,7 +74,7 @@ class UsuarioControllerTest {
 
         // when
         String json = objectMapper.writeValueAsString(usuarioRequest);
-        doThrow(new UsuarioAlreadyRegisteredException()).when(usuarioService).registerNewUser(any());
+        doThrow(new UsuarioAlreadyRegisteredException()).when(usuarioService).save(any());
 
         // then
         mvc
@@ -89,7 +89,7 @@ class UsuarioControllerTest {
 
         // when
         String json = objectMapper.writeValueAsString(usuarioRequest);
-        when(usuarioService.registerNewUser(usuarioRequest))
+        when(usuarioService.save(usuarioRequest))
             .thenReturn(null);
 
         // then
@@ -105,7 +105,7 @@ class UsuarioControllerTest {
 
         // when
         String json = objectMapper.writeValueAsString(usuarioDTO);
-        when(usuarioService.registerNewUser(usuarioDTO))
+        when(usuarioService.save(usuarioDTO))
             .thenReturn(null);
 
         mvc

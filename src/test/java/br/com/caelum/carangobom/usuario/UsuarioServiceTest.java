@@ -20,8 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -59,7 +58,7 @@ class UsuarioServiceTest {
         });
 
         // then
-        var usuarioResponse = usuarioService.registerNewUser(usuarioRequest);
+        var usuarioResponse = usuarioService.save(usuarioRequest);
         assertEquals(1L, usuarioResponse.getId());
         assertEquals(usuarioResponse.getUsername(), usuarioRequest.getUsername());
     }
@@ -73,7 +72,7 @@ class UsuarioServiceTest {
         when(repository.findByUsername(usuarioRequest.getUsername())).thenReturn(Optional.of(usuarioRequest.toModel()));
 
         // then
-        assertThrows(UsuarioAlreadyRegisteredException.class, () -> usuarioService.registerNewUser(usuarioRequest));
+        assertThrows(UsuarioAlreadyRegisteredException.class, () -> usuarioService.save(usuarioRequest));
     }
 
     @Test
@@ -98,6 +97,28 @@ class UsuarioServiceTest {
                 equalToObject(UsuarioResponse.fromModel(usuarios.get(2))),
                 equalToObject(UsuarioResponse.fromModel(usuarios.get(3)))
         ));
+    }
+
+    @Test
+    void deveRetornarUsuarioPorId() {
+        // given
+        var usuario = new Usuario(1L, "Jose", "1234");
+
+        // when
+        when(repository.findById(anyLong())).thenReturn(Optional.of(usuario));
+
+        // then
+        var usuarioResponse = usuarioService.findById(1L);
+        assertEquals(1, usuarioResponse.getId());
+        assertEquals(usuario.getUsername(), usuarioResponse.getUsername());
+    }
+
+    @Test
+    void deveLancarUsuarioNotFoundQuandoUsuarioIdInexistente() {
+        // when
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(UsuarioNotFoundException.class, () -> usuarioService.findById(1L));
     }
 
     @Test
